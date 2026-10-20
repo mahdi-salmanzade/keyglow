@@ -1,7 +1,8 @@
 import { useSyncExternalStore } from 'react'
 import { runtime } from '../engine/runtime'
 import { webHidSupported, WootingDevice, type DeviceInfo } from '../hid/device'
-import { CONFIG_USAGE_PAGE, WOOTING_VID } from '../hid/protocol'
+import { LIGHTBAR_LEDS } from '../hid/lightbar'
+import { CONFIG_USAGE_PAGE, WOOTING_VID, type Rgb } from '../hid/protocol'
 import { syncLightbar } from './lightbar'
 import { getState } from './store'
 
@@ -33,11 +34,44 @@ export function useDevice() {
 
 let stopLightbar: (() => void) | null = null
 
+// What the physical light bar is showing, read back from the keyboard a few times a second.
+let liveBar: Rgb[] | null = null
+const liveListeners = new Set<() => void>()
+let livePoll: ReturnType<typeof setInterval> | undefined
+const LIVE_POLL_MS = 250
+
+export function useLiveBar() {
+  return useSyncExternalStore(
+    (l) => {
+      liveListeners.add(l)
+      return () => void liveListeners.delete(l)
+    },
+    () => liveBar,
+  )
+}
+
+function pollLiveBar(d: WootingDevice | null) {
+  clearInterval(livePoll)
+  liveBar = null
+  liveListeners.forEach((l) => l())
+  if (!d) return
+  livePoll = setInterval(async () => {
+    if (document.visibilityState !== 'visible') return
+    const leds = await d.readLeds()
+    if (!leds || leds.length < LIGHTBAR_LEDS) return
+    const bar = leds.slice(-LIGHTBAR_LEDS)
+    if (liveBar && bar.every((c, i) => c.join() === liveBar![i].join())) return
+    liveBar = bar
+    liveListeners.forEach((l) => l())
+  }, LIVE_POLL_MS)
+}
+
 function adopt(d: WootingDevice | null) {
   device = d
   runtime.attach(d)
   stopLightbar?.()
   stopLightbar = d ? syncLightbar((config) => d.writeLightbar(config)) : null
+  pollLiveBar(d)
   set(d ? { kind: 'connected', info: d.info } : { kind: 'idle' })
 }
 
@@ -98,6 +132,7 @@ if (webHidSupported()) {
       runtime.attach(null)
       stopLightbar?.()
       stopLightbar = null
+      pollLiveBar(null)
       set({ kind: 'idle', notice: 'Keyboard disconnected. Plug it back in to keep going.' })
     }
   })

@@ -266,8 +266,11 @@ button, input { font: inherit; color: inherit; }
   margin: 0 0.28%;
   border: 1px dashed var(--rule); border-radius: 999px;
   color: var(--muted); font-size: clamp(6px, 0.55vw, 9px); letter-spacing: 0.04em; text-transform: uppercase;
-  pointer-events: auto; cursor: help;
+  pointer-events: auto; cursor: pointer;
 }
+.fixture:hover { border-color: var(--ink); color: var(--ink); }
+.fixture[data-mode='colours'] { cursor: crosshair; }
+.fixture[data-mode='colours'] i:hover { outline: 1px solid #fff; outline-offset: -1px; }
 .fixture span { white-space: nowrap; overflow: hidden; }
 .fixture:not([data-mode='keyboard']) {
   display: flex; gap: 1px; padding: 2px; overflow: hidden;
@@ -285,6 +288,8 @@ button, input { font: inherit; color: inherit; }
 .lightbar-strip button:first-child { border-radius: 999px 2px 2px 999px; }
 .lightbar-strip button:last-child { border-radius: 2px 999px 999px 2px; }
 .lightbar-strip button:hover { outline: 2px solid var(--paper); outline-offset: -2px; }
+.tool-section.flash { animation: section-flash 900ms var(--ease-out); }
+@keyframes section-flash { 0% { background: color-mix(in srgb, var(--accent) 22%, transparent); } 100% { background: transparent; } }
 .pulse-swatch { width: 24px; height: 24px; border: 1px solid var(--ink); border-radius: 2px; }
 .marquee {
   position: absolute; pointer-events: none;

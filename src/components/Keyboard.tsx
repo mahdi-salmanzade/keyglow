@@ -3,6 +3,8 @@ import { css, mix, type Rgb } from '../engine/color'
 import { runtime } from '../engine/runtime'
 import { WOOTING_80HE } from '../layout/wooting-80he'
 import type { Key } from '../layout/types'
+import { useLiveBar } from '../state/device'
+import { focusLightbarPanel } from '../state/lightbar'
 import { KEY_BY_ID, paintKeys, targetKeys } from '../state/paint'
 import { checkpoint, getState, pushRecent, setState, useEditor, type LightbarState, type Paint } from '../state/store'
 
@@ -21,10 +23,12 @@ const MIRROR_KEYS = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0']
 const LightbarFixture = memo(function LightbarFixture({
   f,
   lightbar,
+  live,
   register,
 }: {
   f: NonNullable<typeof LAYOUT.fixtures>[number]
   lightbar: LightbarState
+  live: Rgb[] | null
   register: (id: string, el: HTMLElement | null) => void
 }) {
   const style = {
@@ -34,17 +38,25 @@ const LightbarFixture = memo(function LightbarFixture({
     height: `${(f.h / LAYOUT.height) * 100}%`,
   }
   const { mode } = lightbar
+  // Connected: show what the physical bar is doing. Preview: show what keyglow would set.
+  const showLive = live && mode !== 'pulse'
   const seg = (i: number) =>
-    mode === 'colours' ? css(lightbar.colors[i] ?? [0, 0, 0]) : mode === 'pulse' ? css(lightbar.pulseColor) : mode === 'off' ? '#000' : undefined
+    showLive ? css(live[i])
+    : mode === 'colours' ? css(lightbar.colors[i] ?? [0, 0, 0])
+    : mode === 'pulse' ? css(lightbar.pulseColor)
+    : mode === 'off' ? '#000'
+    : undefined
+  const outline = mode === 'keyboard' && !live
   return (
     <div
       className="fixture"
-      data-mode={mode}
+      data-mode={outline ? 'keyboard' : mode}
+      data-live={showLive ? 'true' : undefined}
       ref={(el) => register(f.id, el)}
-      title={mode === 'keyboard' ? 'Light bar: following the keyboard’s own effect' : `Light bar: ${mode}`}
-      style={{ ...style, '--pulse': `${lightbar.pulseSeconds}s`, opacity: mode === 'keyboard' ? 1 : 0.35 + lightbar.brightness * 0.65 } as React.CSSProperties}
+      title={mode === 'colours' ? 'Light bar: click an LED to paint it' : 'Light bar: click to open its settings'}
+      style={{ ...style, '--pulse': `${lightbar.pulseSeconds}s` } as React.CSSProperties}
     >
-      {mode === 'keyboard' ? <span>{f.label}</span> : Array.from({ length: 10 }, (_, i) => <i key={i} style={{ background: seg(i) }} />)}
+      {outline ? <span>{f.label}</span> : Array.from({ length: 10 }, (_, i) => <i key={i} data-bar-led={i} style={{ background: seg(i) }} />)}
     </div>
   )
 })
@@ -102,6 +114,7 @@ export function Keyboard() {
   const tool = useEditor((s) => s.tool)
   const selection = useEditor((s) => s.selection)
   const lightbar = useEditor((s) => s.lightbar)
+  const live = useLiveBar()
   const boardRef = useRef<HTMLDivElement>(null)
   const elements = useRef(new Map<string, HTMLElement>())
   const gesture = useRef<Gesture | null>(null)
@@ -118,7 +131,7 @@ export function Keyboard() {
       runtime.onFrame((colors) => {
         // Mirror mode: the keyboard copies the number row onto the bar, so preview exactly that.
         const bar = elements.current.get('lightbar')
-        if (bar && getState().lightbar.mode === 'mirror') {
+        if (bar && getState().lightbar.mode === 'mirror' && !bar.dataset.live) {
           const row = MIRROR_KEYS.map((id) => colors[KEY_BY_ID.get(id)!.leds[0]])
           bar.querySelectorAll<HTMLElement>('i').forEach((seg, i) => (seg.style.background = css(row[i])))
         }
@@ -181,6 +194,19 @@ export function Keyboard() {
 
   const onPointerDown = (e: React.PointerEvent) => {
     if (e.button !== 0 && e.button !== 2) return
+    const target = e.target as HTMLElement
+    if (target.closest('.fixture')) {
+      const led = target.closest<HTMLElement>('[data-bar-led]')
+      const lb = getState().lightbar
+      if (lb.mode === 'colours' && led) {
+        const i = Number(led.dataset.barLed)
+        const color: Rgb = e.button === 2 || e.altKey ? [0, 0, 0] : getState().primary
+        setState((s) => ({ lightbar: { ...s.lightbar, colors: s.lightbar.colors.map((c, j) => (j === i ? color : c)) } }))
+      } else {
+        focusLightbarPanel()
+      }
+      return
+    }
     const key = keyAt(e)
     const p = toBoard(e)
     const s = getState()
@@ -272,7 +298,7 @@ export function Keyboard() {
         <KeyCap key={k.id} k={k} selected={selection.includes(k.id)} register={register} />
       ))}
       {LAYOUT.fixtures?.map((f) => (
-        <LightbarFixture key={f.id} f={f} lightbar={lightbar} register={register} />
+        <LightbarFixture key={f.id} f={f} lightbar={lightbar} live={live} register={register} />
       ))}
       {overlay?.kind === 'marquee' && (() => {
         const a = pct(overlay.from), b = pct(overlay.to)

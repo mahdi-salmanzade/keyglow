@@ -13,6 +13,8 @@ export const LIGHTBAR_LEDS = 10
 export const LIGHTBAR_COMMAND = 0x20
 /** Command whose reply carries the active profile slot as the first payload byte. */
 export const ACTIVE_PROFILE_COMMAND = 0x0b
+/** Command whose reply carries every LED's live colour; the last 10 are the light bar. */
+export const LIVE_LEDS_COMMAND = 0x4a
 
 export type LightbarLayer =
   | { kind: 'solid'; color: Rgb }

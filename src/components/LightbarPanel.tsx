@@ -41,7 +41,7 @@ export function LightbarPanel() {
   const mode = MODES.find((m) => m.id === lb.mode)!
 
   return (
-    <section className="tool-section" aria-label="Light bar">
+    <section className="tool-section" id="lightbar-panel" aria-label="Light bar">
       <span className="label">
         Light bar · {connected ? (lb.mode === 'keyboard' ? 'not touched' : 'live on the keyboard') : 'connect to apply'}
       </span>

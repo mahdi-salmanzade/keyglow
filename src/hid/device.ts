@@ -11,7 +11,7 @@ import {
   type Layout,
   type Rgb,
 } from './protocol'
-import { ACTIVE_PROFILE_COMMAND, encodeLightbar, lightbarReport, type LightbarConfig } from './lightbar'
+import { ACTIVE_PROFILE_COMMAND, encodeLightbar, lightbarReport, LIVE_LEDS_COMMAND, type LightbarConfig } from './lightbar'
 
 export type DeviceInfo = {
   model: string
@@ -35,6 +35,9 @@ export class WootingDevice {
   private pendingFrame: Uint8Array<ArrayBuffer> | null = null
   private writing = false
   private replyWaiter: ((data: DataView) => void) | null = null
+  private pendingCommand = -1
+  /** Commands share one reply channel, so they run strictly one at a time. */
+  private queue: Promise<unknown> = Promise.resolve()
   private readonly dev: HIDDevice
 
   private constructor(dev: HIDDevice, info: DeviceInfo) {
@@ -78,14 +81,22 @@ export class WootingDevice {
   }
 
   private onInput = (e: HIDInputReportEvent) => {
-    if (e.reportId !== COMMAND_REPORT_ID || !this.replyWaiter) return
+    // Replies echo the command byte; long ones (live LED colours) arrive on bigger input reports.
+    if (!this.replyWaiter || e.data.byteLength < 3 || e.data.getUint8(2) !== this.pendingCommand) return
     const waiter = this.replyWaiter
     this.replyWaiter = null
     waiter(e.data)
   }
 
   /** Sends one command and resolves with its reply (or null if none arrives in time). */
-  async command(cmd: number, p0 = 0, p1 = 0, p2 = 0, p3 = 0): Promise<DataView | null> {
+  command(cmd: number, p0 = 0, p1 = 0, p2 = 0, p3 = 0): Promise<DataView | null> {
+    const run = this.queue.then(() => this.exchange(cmd, p0, p1, p2, p3))
+    this.queue = run.catch(() => null)
+    return run
+  }
+
+  private async exchange(cmd: number, p0: number, p1: number, p2: number, p3: number): Promise<DataView | null> {
+    this.pendingCommand = cmd
     const reply = new Promise<DataView | null>((resolve) => {
       const timer = setTimeout(() => {
         this.replyWaiter = null
@@ -116,6 +127,20 @@ export class WootingDevice {
     } finally {
       this.writing = false
     }
+  }
+
+  /** What every LED is showing right now: 6x17 keys then the 10 light bar LEDs (RGB565 expanded). */
+  async readLeds(): Promise<Rgb[] | null> {
+    const reply = await this.command(LIVE_LEDS_COMMAND)
+    if (!reply || reply.byteLength < 6) return null
+    const len = reply.getUint8(4) | (reply.getUint8(5) << 8)
+    const out: Rgb[] = []
+    for (let i = 6; i + 1 < 6 + len && i + 1 < reply.byteLength; i += 2) {
+      const v = reply.getUint8(i) | (reply.getUint8(i + 1) << 8)
+      const r = v >> 11, g = (v >> 5) & 63, b = v & 31
+      out.push([(r << 3) | (r >> 2), (g << 2) | (g >> 4), (b << 3) | (b >> 2)])
+    }
+    return out
   }
 
   /** Slot of the profile the keyboard is using right now (Mode key switches it). */

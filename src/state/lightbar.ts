@@ -50,3 +50,13 @@ export function syncLightbar(write: Writer) {
     unsubscribe()
   }
 }
+
+/** Brings the Light bar section into view and flashes it, for clicks on the on-screen bar. */
+export function focusLightbarPanel() {
+  const el = document.getElementById('lightbar-panel')
+  if (!el) return
+  el.scrollIntoView({ behavior: 'smooth', block: 'center' })
+  el.classList.remove('flash')
+  void el.offsetWidth
+  el.classList.add('flash')
+}
