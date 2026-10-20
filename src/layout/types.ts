@@ -23,6 +23,9 @@ export type Key = {
   leds: number[]
 }
 
+/** Lit hardware on the board that apps can't address (drawn for orientation only). */
+export type Fixture = { id: string; label: string; x: number; y: number; w: number; h: number }
+
 export type KeyboardLayout = {
   id: string
   name: string
@@ -30,4 +33,5 @@ export type KeyboardLayout = {
   height: number
   keys: Key[]
   leds: Led[]
+  fixtures?: Fixture[]
 }

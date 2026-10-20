@@ -231,6 +231,21 @@ export function Keyboard() {
       {LAYOUT.keys.map((k) => (
         <KeyCap key={k.id} k={k} selected={selection.includes(k.id)} register={register} />
       ))}
+      {LAYOUT.fixtures?.map((f) => (
+        <div
+          key={f.id}
+          className="fixture"
+          title="Light bar: runs its own Wootility effect. Wooting hasn't opened it to apps yet, so keyglow can't colour it."
+          style={{
+            left: `${(f.x / LAYOUT.width) * 100}%`,
+            top: `${(f.y / LAYOUT.height) * 100}%`,
+            width: `${(f.w / LAYOUT.width) * 100}%`,
+            height: `${(f.h / LAYOUT.height) * 100}%`,
+          }}
+        >
+          <span>{f.label}</span>
+        </div>
+      ))}
       {overlay?.kind === 'marquee' && (() => {
         const a = pct(overlay.from), b = pct(overlay.to)
         return (

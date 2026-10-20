@@ -76,17 +76,17 @@ The keyboard only has 5/6/5-bit color depth: pick colors in 24-bit, but nearby s
 
 ## 80HE key matrix (row, col → key)
 
-From OpenRGB's `matrix_map_80HE`; `·` means no LED. Still to confirm visually on this board
-(light each cell once and look).
+Cells from OpenRGB's `matrix_map_80HE`; `·` means no LED. Legends follow the physical board, which has
+PgUp/PgDn and a right Ctrl where OpenRGB lists Home/End and right Win.
 
 | r\c | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | 0 | Esc | F1 | F2 | F3 | F4 | F5 | F6 | F7 | F8 | · | F9 | F10 | F11 | F12 | Mode | PrtSc | Pause |
-| 1 | ` | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 0 | - | = | JIS | Bksp | Ins | Home |
-| 2 | Tab | Q | W | E | R | T | Y | U | I | O | P | [ | ] | · | \ | Del | End |
+| 1 | ` | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 0 | - | = | JIS | Bksp | Ins | PgUp |
+| 2 | Tab | Q | W | E | R | T | Y | U | I | O | P | [ | ] | · | \ | Del | PgDn |
 | 3 | Caps | A | S | D | F | G | H | J | K | L | ; | ' | ISO # | · | Enter | · | · |
 | 4 | LShift | ISO \ | Z | X | C | V | B | N | M | , | . | / | · | JIS | RShift | ↑ | · |
-| 5 | LCtrl | LWin | LAlt | JIS | Space LED 1 | Space LED 2 | Space | Space LED 3 | Space LED 4 | JIS | RAlt | RWin | Fn | · | ← | ↓ | → |
+| 5 | LCtrl | LWin | LAlt | JIS | Space LED 1 | Space LED 2 | Space | Space LED 3 | Space LED 4 | JIS | RAlt | RCtrl | Fn | · | ← | ↓ | → |
 
 Note that the OpenRGB index table marks `(3,15)`, `(3,16)` and `(4,16)` as unused, while
 the SDK's 17-column buffer still sends them. Harmless, but the visual editor should hide them.
@@ -99,4 +99,10 @@ the SDK's 17-column buffer still sends them. Harmless, but the visual editor sho
 - macOS needed no Input Monitoring permission for `0xFF55` (**verified**).
 - WebHID: `navigator.hid.requestDevice({ filters: [{ vendorId: 0x31E3, usagePage: 0xFF55 }] })`
   needs a user click; `event.data` / `sendReport` data **exclude** the report-ID byte.
-- The light bar (10 LEDs) is not in the RGB matrix. See `reference/80he-lightbar/`.
+- The light bar (10 LEDs, right of Enter) is not in the RGB matrix. **Verified** with `tools/lightbar-probe`:
+  lighting all 38 cells no key uses (including 3,15 and 3,16 directly beneath the bar) left it unchanged
+  while the keys responded. Firmware 2.10.1 keeps the bar on its own Wootility effect while an SDK app runs;
+  Wooting has promised SDK control "in the future" (not shipped as of Wootility 5.4.2, Sep 2026).
+- The undocumented Light Indicator push (output report 1, command `0x1F`, see `reference/80he-lightbar/`)
+  is accepted by the 80HE but never acknowledged, and only renders when a Light Indicator effect is set up
+  in Wootility. Untested end to end here (no Wootility desktop or background service on the test Mac).

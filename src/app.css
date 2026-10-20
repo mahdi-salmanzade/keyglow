@@ -259,6 +259,16 @@ button, input { font: inherit; color: inherit; }
 .key[data-tone='dark'][aria-selected='true'] .cap { color: #fff; }
 .key.pressed .cap { transform: translateY(2px) scale(0.97); }
 .cap .shift { opacity: 0.7; }
+/* Outline means "on the board, but not ours to light": the specimen's outline/fill grammar. */
+.fixture {
+  position: absolute;
+  display: grid; place-items: center;
+  margin: 0 0.28%;
+  border: 1px dashed var(--rule); border-radius: 999px;
+  color: var(--muted); font-size: clamp(6px, 0.55vw, 9px); letter-spacing: 0.04em; text-transform: uppercase;
+  pointer-events: auto; cursor: help;
+}
+.fixture span { white-space: nowrap; overflow: hidden; }
 .marquee {
   position: absolute; pointer-events: none;
   border: 1px solid var(--ink); background: color-mix(in srgb, var(--accent) 8%, transparent);

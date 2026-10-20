@@ -1,7 +1,8 @@
 import type { Key, KeyboardLayout, Led } from './types'
 
-// Wooting 80HE, ANSI. Matrix cells follow OpenRGB's matrix_map_80HE (verified against the
-// keyboard's 6x17 RGB area); physical positions are in key units (u).
+// Wooting 80HE, ANSI. Matrix cells follow OpenRGB's matrix_map_80HE; legends follow the
+// physical board (PgUp/PgDn and a right Ctrl, where OpenRGB says Home/End and right Win).
+// Physical positions are in key units (u).
 // [id, label, shift, code, matrix row, matrix col, x, width]
 type Spec = [string, string, string | undefined, string | undefined, number, number, number, number]
 
@@ -41,7 +42,7 @@ const SPECS: Spec[] = [
   ['equal', '=', '+', 'Equal', 1, 12, 12, 1],
   ['backspace', 'Backspace', U, 'Backspace', 1, 14, 13, 2],
   ['ins', 'Ins', U, 'Insert', 1, 15, 15.25, 1],
-  ['home', 'Home', U, 'Home', 1, 16, 16.25, 1],
+  ['pgup', 'PgUp', U, 'PageUp', 1, 16, 16.25, 1],
 
   ['tab', 'Tab', U, 'Tab', 2, 0, 0, 1.5],
   ['q', 'Q', U, 'KeyQ', 2, 1, 1.5, 1],
@@ -58,7 +59,7 @@ const SPECS: Spec[] = [
   ['rbracket', ']', '}', 'BracketRight', 2, 12, 12.5, 1],
   ['backslash', '\\', '|', 'Backslash', 2, 14, 13.5, 1.5],
   ['del', 'Del', U, 'Delete', 2, 15, 15.25, 1],
-  ['end', 'End', U, 'End', 2, 16, 16.25, 1],
+  ['pgdn', 'PgDn', U, 'PageDown', 2, 16, 16.25, 1],
 
   ['caps', 'Caps', U, 'CapsLock', 3, 0, 0, 1.75],
   ['a', 'A', U, 'KeyA', 3, 1, 1.75, 1],
@@ -92,7 +93,7 @@ const SPECS: Spec[] = [
   ['lwin', 'Win', U, 'MetaLeft', 5, 1, 1.25, 1.25],
   ['lalt', 'Alt', U, 'AltLeft', 5, 2, 2.5, 1.25],
   ['ralt', 'Alt', U, 'AltRight', 5, 10, 10, 1.25],
-  ['rwin', 'Win', U, 'MetaRight', 5, 11, 11.25, 1.25],
+  ['rctrl', 'Ctrl', U, 'ControlRight', 5, 11, 11.25, 1.25],
   ['fn', 'Fn', U, U, 5, 12, 12.5, 1.25],
   ['left', '←', U, 'ArrowLeft', 5, 14, 14.25, 1],
   ['down', '↓', U, 'ArrowDown', 5, 15, 15.25, 1],
@@ -128,7 +129,17 @@ function build(): KeyboardLayout {
   })
 
   keys.sort((a, b) => a.y - b.y || a.x - b.x)
-  return { id: 'wooting-80he-ansi', name: 'Wooting 80HE (ANSI)', width: 17.25, height: 6.25, keys, leds }
+  return {
+    id: 'wooting-80he-ansi',
+    name: 'Wooting 80HE (ANSI)',
+    width: 17.25,
+    height: 6.25,
+    keys,
+    leds,
+    // The light bar right of Enter. Probed on a real board: it ignores every cell of the
+    // colour frame (including 3,15 and 3,16 beneath it), so apps can't drive it yet.
+    fixtures: [{ id: 'lightbar', label: 'Light bar', x: 15.25, y: 3.55, w: 2, h: 0.4 }],
+  }
 }
 
 export const WOOTING_80HE = build()
