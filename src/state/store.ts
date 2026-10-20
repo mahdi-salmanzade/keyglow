@@ -173,5 +173,6 @@ export function applyLook(look: Look) {
 export function choosePreset(id: string) {
   const preset = PRESET_BY_ID.get(id)
   if (!preset) return
-  setState({ presetId: id, direction: preset.direction ?? 'right' })
+  // A fresh pick shows the preset's own colours; a hue shift carried over would recolour it.
+  setState({ presetId: id, direction: preset.direction ?? 'right', hueShift: 0 })
 }

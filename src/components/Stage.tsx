@@ -34,6 +34,9 @@ const AXES: AxisSpec[] = [
 const AXIS_BY_ID = new Map(AXES.map((a) => [a.id, a]))
 const ARROW: Record<EditorState['direction'], string> = { right: '→', left: '←', up: '↑', down: '↓', out: 'OUT', in: 'IN' }
 
+/** A click with a shaky hand should not nudge the readout; scrubbing starts past this. */
+const DEAD_ZONE_PX = 6
+
 const clamp = (a: AxisSpec, v: number) => Math.min(a.max, Math.max(a.min, Math.round(v / a.step) * a.step))
 
 function setAxis(a: AxisSpec, v: number) {
@@ -45,7 +48,7 @@ function Readout() {
   const active = useEditor((s) => s.activeAxis)
   const axis = AXIS_BY_ID.get(active)!
   const value = useEditor((s) => s[axis.key])
-  const drag = useRef<{ x: number; v: number } | null>(null)
+  const drag = useRef<{ x: number; v: number; scrubbing: boolean } | null>(null)
   const perPx = (axis.max - axis.min) / 360
 
   return (
@@ -55,10 +58,17 @@ function Readout() {
         aria-label={`${axis.name}: ${axis.format(value)}. Drag sideways or use arrow keys to change.`}
         onPointerDown={(e) => {
           e.currentTarget.setPointerCapture(e.pointerId)
-          drag.current = { x: e.clientX, v: value }
+          drag.current = { x: e.clientX, v: value, scrubbing: false }
         }}
         onPointerMove={(e) => {
-          if (drag.current) setAxis(axis, drag.current.v + (e.clientX - drag.current.x) * perPx)
+          const d = drag.current
+          if (!d) return
+          if (!d.scrubbing) {
+            if (Math.abs(e.clientX - d.x) < DEAD_ZONE_PX) return
+            d.scrubbing = true
+            d.x = e.clientX // start from here so the value doesn't jump by the dead zone
+          }
+          setAxis(axis, d.v + (e.clientX - d.x) * perPx)
         }}
         onPointerUp={() => (drag.current = null)}
         onDoubleClick={() => setAxis(axis, axis.initial)}
