@@ -27,7 +27,7 @@ const AXES: AxisSpec[] = [
     ends: ['−180°', '+180°'],
   },
   { id: 'speed', key: 'speed', name: 'Speed', short: 'SPEED', min: 0, max: 4, step: 0.05, initial: 1, format: (v) => `${v.toFixed(2)}×`, ends: ['0×', '4×'] },
-  { id: 'brightness', key: 'brightness', name: 'Brightness', short: 'BRI', min: 0, max: 1, step: 0.01, initial: 1, format: (v) => `${Math.round(v * 100)}%`, ends: ['0%', '100%'] },
+  { id: 'brightness', key: 'brightness', name: 'Brightness', short: 'BRI', min: 0, max: 1.5, step: 0.01, initial: 1, format: (v) => `${Math.round(v * 100)}%`, ends: ['0%', '150%'] },
   { id: 'spread', key: 'spread', name: 'Spread', short: 'SPREAD', min: 0.25, max: 3, step: 0.05, initial: 1, format: (v) => v.toFixed(2), ends: ['0.25', '3.00'] },
 ]
 
@@ -143,6 +143,7 @@ function Axes() {
                 {a.name}
               </button>
               {disabled && <span className="axis-note">no motion in this preset</span>}
+              {a.id === 'brightness' && s.brightness > 1 && <span className="axis-note">lifting mid-tones on the keyboard</span>}
             </div>
             <label className="axis-value" htmlFor={id}>{a.format(s[a.key])}</label>
             <input

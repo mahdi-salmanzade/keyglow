@@ -27,7 +27,7 @@ export function sanitizeLook(raw: unknown): Look | null {
     presetId: typeof r.presetId === 'string' && PRESET_BY_ID.has(r.presetId) ? r.presetId : DEFAULT_LOOK.presetId,
     hueShift: num(r.hueShift, -180, 180, 0),
     speed: num(r.speed, 0, 4, 1),
-    brightness: num(r.brightness, 0, 1, 1),
+    brightness: num(r.brightness, 0, 1.5, 1),
     spread: num(r.spread, 0.25, 3, 1),
     direction: directions.includes(r.direction as Look['direction']) ? (r.direction as Look['direction']) : 'right',
     primary: isRgb(r.primary) ? r.primary : DEFAULT_LOOK.primary,

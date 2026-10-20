@@ -17,6 +17,18 @@ type FrameListener = (colors: readonly Rgb[]) => void
 
 const easeOutExpo = (p: number) => (p >= 1 ? 1 : 1 - 2 ** (-10 * p))
 
+// Above 100%, brightness lifts mid-tones on the keyboard (not on screen). The 80HE drives SDK
+// colours through a steep curve, so mid values look much darker than on screen; at 150% the
+// lift fully undoes a 2.2 curve. Pure channels (0 and 255) are untouched, so white stays white.
+const LED_GAMMA = 2.2
+const BOOST_RANGE = 0.5
+function liftTable(brightness: number): Uint8Array | null {
+  if (brightness <= 1) return null
+  const t = Math.min(1, (brightness - 1) / BOOST_RANGE)
+  const exponent = 1 / (1 + t * (LED_GAMMA - 1))
+  return Uint8Array.from({ length: 256 }, (_, v) => Math.round(255 * (v / 255) ** exponent))
+}
+
 /**
  * Owns the lighting loop: renders the active preset, layers paint and the axes on top,
  * crossfades between presets, and streams frames to the keyboard and the on-screen view.
@@ -139,7 +151,7 @@ class Runtime {
     for (let i = 0; i < LED_COUNT; i++) {
       const painted = s.paint[i]
       let c = hueShift(painted ?? this.base[i], s.hueShift)
-      if (s.brightness < 1) c = scale(c, s.brightness)
+      if (s.brightness < 1) c = scale(c, Math.max(0, s.brightness))
       this.frame[i] = this.fadeFrom && fadeP < 1 ? mix(this.fadeFrom[i], c, fadeP) : c
     }
     if (fadeP >= 1) this.fadeFrom = null
@@ -156,8 +168,13 @@ class Runtime {
     this.fps = this.fpsWindow.length
   }
 
+  private lift: { brightness: number; table: Uint8Array | null } = { brightness: 1, table: null }
+
   private send(now: number) {
     if (!this.device || this.released) return
+    const { brightness } = getState()
+    if (brightness !== this.lift.brightness) this.lift = { brightness, table: liftTable(brightness) }
+    const table = this.lift.table
     if (now - this.lastSent < SEND_INTERVAL_MS) {
       this.dirty = true // try again next tick so a static look's last change still lands
       return
@@ -166,7 +183,8 @@ class Runtime {
     let signature = ''
     for (let i = 0; i < LED_COUNT; i++) {
       const led = LAYOUT.leds[i]
-      const q = quantize(this.frame[i])
+      const c = this.frame[i]
+      const q = quantize(table ? [table[c[0]], table[c[1]], table[c[2]]] : c)
       matrix[matrixIndex(led.row, led.col)] = q
       signature += q.join(',') + ';'
     }
