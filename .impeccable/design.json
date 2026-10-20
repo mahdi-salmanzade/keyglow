@@ -1,0 +1,500 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-20T20:46:16+00:00",
+  "title": "Design System: keyglow",
+  "extensions": {
+    "colorMeta": {
+      "paper": {
+        "role": "neutral",
+        "displayName": "Paper",
+        "canonical": "#f4f3ef",
+        "tonalRamp": [
+          "oklch(15% 0.005 95.1)",
+          "oklch(26% 0.005 95.1)",
+          "oklch(38% 0.005 95.1)",
+          "oklch(50% 0.005 95.1)",
+          "oklch(62% 0.005 95.1)",
+          "oklch(74% 0.005 95.1)",
+          "oklch(85% 0.005 95.1)",
+          "oklch(95% 0.005 95.1)"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Ink",
+        "canonical": "#111111",
+        "tonalRamp": [
+          "oklch(15% 0.0 89.9)",
+          "oklch(26% 0.0 89.9)",
+          "oklch(38% 0.0 89.9)",
+          "oklch(50% 0.0 89.9)",
+          "oklch(62% 0.0 89.9)",
+          "oklch(74% 0.0 89.9)",
+          "oklch(85% 0.0 89.9)",
+          "oklch(95% 0.0 89.9)"
+        ]
+      },
+      "muted": {
+        "role": "neutral",
+        "displayName": "Muted",
+        "canonical": "#64635e",
+        "tonalRamp": [
+          "oklch(15% 0.008 97.5)",
+          "oklch(26% 0.008 97.5)",
+          "oklch(38% 0.008 97.5)",
+          "oklch(50% 0.008 97.5)",
+          "oklch(62% 0.008 97.5)",
+          "oklch(74% 0.008 97.5)",
+          "oklch(85% 0.008 97.5)",
+          "oklch(95% 0.008 97.5)"
+        ]
+      },
+      "rule": {
+        "role": "neutral",
+        "displayName": "Rule Grey",
+        "canonical": "#8a8984",
+        "tonalRamp": [
+          "oklch(15% 0.007 97.4)",
+          "oklch(26% 0.007 97.4)",
+          "oklch(38% 0.007 97.4)",
+          "oklch(50% 0.007 97.4)",
+          "oklch(62% 0.007 97.4)",
+          "oklch(74% 0.007 97.4)",
+          "oklch(85% 0.007 97.4)",
+          "oklch(95% 0.007 97.4)"
+        ]
+      },
+      "line": {
+        "role": "neutral",
+        "displayName": "Line",
+        "canonical": "#d9d8d2",
+        "tonalRamp": [
+          "oklch(15% 0.008 98.9)",
+          "oklch(26% 0.008 98.9)",
+          "oklch(38% 0.008 98.9)",
+          "oklch(50% 0.008 98.9)",
+          "oklch(62% 0.008 98.9)",
+          "oklch(74% 0.008 98.9)",
+          "oklch(85% 0.008 98.9)",
+          "oklch(95% 0.008 98.9)"
+        ]
+      },
+      "raise": {
+        "role": "neutral",
+        "displayName": "Raise",
+        "canonical": "#ebeae4",
+        "tonalRamp": [
+          "oklch(15% 0.008 98.9)",
+          "oklch(26% 0.008 98.9)",
+          "oklch(38% 0.008 98.9)",
+          "oklch(50% 0.008 98.9)",
+          "oklch(62% 0.008 98.9)",
+          "oklch(74% 0.008 98.9)",
+          "oklch(85% 0.008 98.9)",
+          "oklch(95% 0.008 98.9)"
+        ]
+      },
+      "accent": {
+        "role": "primary",
+        "displayName": "Foundry Orange",
+        "canonical": "#ff3d00",
+        "tonalRamp": [
+          "oklch(15% 0.235 34.0)",
+          "oklch(26% 0.235 34.0)",
+          "oklch(38% 0.235 34.0)",
+          "oklch(50% 0.235 34.0)",
+          "oklch(62% 0.235 34.0)",
+          "oklch(74% 0.235 34.0)",
+          "oklch(85% 0.235 34.0)",
+          "oklch(95% 0.235 34.0)"
+        ]
+      },
+      "on-accent": {
+        "role": "primary",
+        "displayName": "On Accent",
+        "canonical": "#111111",
+        "tonalRamp": [
+          "oklch(15% 0 0)",
+          "oklch(26% 0 0)",
+          "oklch(38% 0 0)",
+          "oklch(50% 0 0)",
+          "oklch(62% 0 0)",
+          "oklch(74% 0 0)",
+          "oklch(85% 0 0)",
+          "oklch(95% 0 0)"
+        ]
+      },
+      "ink-theme-paper": {
+        "role": "neutral",
+        "displayName": "Paper (Ink theme)",
+        "canonical": "#121211",
+        "tonalRamp": [
+          "oklch(15% 0.002 106.6)",
+          "oklch(26% 0.002 106.6)",
+          "oklch(38% 0.002 106.6)",
+          "oklch(50% 0.002 106.6)",
+          "oklch(62% 0.002 106.6)",
+          "oklch(74% 0.002 106.6)",
+          "oklch(85% 0.002 106.6)",
+          "oklch(95% 0.002 106.6)"
+        ]
+      },
+      "ink-theme-ink": {
+        "role": "neutral",
+        "displayName": "Ink (Ink theme)",
+        "canonical": "#f1f0ea",
+        "tonalRamp": [
+          "oklch(15% 0.008 98.9)",
+          "oklch(26% 0.008 98.9)",
+          "oklch(38% 0.008 98.9)",
+          "oklch(50% 0.008 98.9)",
+          "oklch(62% 0.008 98.9)",
+          "oklch(74% 0.008 98.9)",
+          "oklch(85% 0.008 98.9)",
+          "oklch(95% 0.008 98.9)"
+        ]
+      },
+      "ink-theme-muted": {
+        "role": "neutral",
+        "displayName": "Muted (Ink theme)",
+        "canonical": "#a6a59f",
+        "tonalRamp": [
+          "oklch(15% 0.009 98.9)",
+          "oklch(26% 0.009 98.9)",
+          "oklch(38% 0.009 98.9)",
+          "oklch(50% 0.009 98.9)",
+          "oklch(62% 0.009 98.9)",
+          "oklch(74% 0.009 98.9)",
+          "oklch(85% 0.009 98.9)",
+          "oklch(95% 0.009 98.9)"
+        ]
+      },
+      "ink-theme-rule": {
+        "role": "neutral",
+        "displayName": "Rule Grey (Ink theme)",
+        "canonical": "#6c6b66",
+        "tonalRamp": [
+          "oklch(15% 0.008 97.5)",
+          "oklch(26% 0.008 97.5)",
+          "oklch(38% 0.008 97.5)",
+          "oklch(50% 0.008 97.5)",
+          "oklch(62% 0.008 97.5)",
+          "oklch(74% 0.008 97.5)",
+          "oklch(85% 0.008 97.5)",
+          "oklch(95% 0.008 97.5)"
+        ]
+      },
+      "ink-theme-line": {
+        "role": "neutral",
+        "displayName": "Line (Ink theme)",
+        "canonical": "#2b2b29",
+        "tonalRamp": [
+          "oklch(15% 0.004 106.6)",
+          "oklch(26% 0.004 106.6)",
+          "oklch(38% 0.004 106.6)",
+          "oklch(50% 0.004 106.6)",
+          "oklch(62% 0.004 106.6)",
+          "oklch(74% 0.004 106.6)",
+          "oklch(85% 0.004 106.6)",
+          "oklch(95% 0.004 106.6)"
+        ]
+      },
+      "ink-theme-raise": {
+        "role": "neutral",
+        "displayName": "Raise (Ink theme)",
+        "canonical": "#1c1c1b",
+        "tonalRamp": [
+          "oklch(15% 0.002 106.6)",
+          "oklch(26% 0.002 106.6)",
+          "oklch(38% 0.002 106.6)",
+          "oklch(50% 0.002 106.6)",
+          "oklch(62% 0.002 106.6)",
+          "oklch(74% 0.002 106.6)",
+          "oklch(85% 0.002 106.6)",
+          "oklch(95% 0.002 106.6)"
+        ]
+      },
+      "ink-theme-accent": {
+        "role": "primary",
+        "displayName": "Foundry Orange (Ink theme)",
+        "canonical": "#ff5a26",
+        "tonalRamp": [
+          "oklch(15% 0.21 36.7)",
+          "oklch(26% 0.21 36.7)",
+          "oklch(38% 0.21 36.7)",
+          "oklch(50% 0.21 36.7)",
+          "oklch(62% 0.21 36.7)",
+          "oklch(74% 0.21 36.7)",
+          "oklch(85% 0.21 36.7)",
+          "oklch(95% 0.21 36.7)"
+        ]
+      },
+      "ink-theme-on-accent": {
+        "role": "primary",
+        "displayName": "On Accent (Ink theme)",
+        "canonical": "#121211",
+        "tonalRamp": [
+          "oklch(15% 0.002 106.6)",
+          "oklch(26% 0.002 106.6)",
+          "oklch(38% 0.002 106.6)",
+          "oklch(50% 0.002 106.6)",
+          "oklch(62% 0.002 106.6)",
+          "oklch(74% 0.002 106.6)",
+          "oklch(85% 0.002 106.6)",
+          "oklch(95% 0.002 106.6)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display Readout",
+        "purpose": "The active axis value on the stage only. 60px below 861px."
+      },
+      "wordmark": {
+        "displayName": "Wordmark",
+        "purpose": "\"keyglow\" in the status bar only."
+      },
+      "value": {
+        "displayName": "Axis Value",
+        "purpose": "The four axis values above their sliders."
+      },
+      "headline": {
+        "displayName": "Instance Name",
+        "purpose": "Current preset name on the stage."
+      },
+      "readout": {
+        "displayName": "Readout Strip",
+        "purpose": "Uppercase board facts under the keyboard."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Rows, fields, meta, hints; buttons 11px/500, chips and codes 10px."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Uppercase section, group and axis labels in muted."
+      }
+    },
+    "shadows": [
+      {
+        "name": "cap-ring",
+        "value": "inset 0 0 0 1px rgb(17 17 17 / 0.14)",
+        "purpose": "Hairline edge on key caps; not elevation."
+      },
+      {
+        "name": "strip-ring",
+        "value": "inset 0 0 0 1px rgb(0 0 0 / 0.12)",
+        "purpose": "Hairline edge on preset colour strips."
+      },
+      {
+        "name": "thumb-ring",
+        "value": "0 0 0 1px #111",
+        "purpose": "Outer ring on the colour-field thumb (with a 2px white border) and hue thumb so they read on any hue."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-out",
+        "value": "cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "Exponential ease-out for key press, stop scale and toasts."
+      },
+      {
+        "name": "preset-crossfade",
+        "value": "280ms easeOutExpo",
+        "purpose": "Key colours crossfade on preset change (engine-driven)."
+      },
+      {
+        "name": "control-state",
+        "value": "120ms",
+        "purpose": "Background and colour transitions on buttons."
+      },
+      {
+        "name": "key-press",
+        "value": "90ms",
+        "purpose": "Cap sinks 2px and scales to 0.97."
+      },
+      {
+        "name": "stop-select",
+        "value": "160ms",
+        "purpose": "Current rail stop fills accent and scales 1.5x."
+      },
+      {
+        "name": "toast-in",
+        "value": "320ms",
+        "purpose": "Toast rises 8px and fades in."
+      },
+      {
+        "name": "reduced-motion",
+        "value": "0ms",
+        "purpose": "prefers-reduced-motion zeroes all transitions and animations."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "desktop",
+        "value": "1280px"
+      },
+      {
+        "name": "tablet",
+        "value": "1279px"
+      },
+      {
+        "name": "mobile",
+        "value": "860px"
+      },
+      {
+        "name": "phone",
+        "value": "600px"
+      }
+    ],
+    "themes": [
+      {
+        "name": "paper",
+        "selector": ":root, [data-theme='paper']",
+        "default": true
+      },
+      {
+        "name": "ink",
+        "selector": "[data-theme='ink']",
+        "purpose": "Dim rooms; swaps ground and ink, warms the accent."
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Foundry Orange action; reserved for Connect keyboard and Save.",
+      "html": "<button class=\"ds-btn ds-btn-primary\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M12 22v-5\"/><path d=\"M9 8V2\"/><path d=\"M15 8V2\"/><path d=\"M18 8v5a4 4 0 0 1-4 4h-4a4 4 0 0 1-4-4V8Z\"/></svg> Connect keyboard</button>",
+      "css": ":host{--paper:#f4f3ef;--ink:#111111;--muted:#64635e;--rule:#8a8984;--line:#d9d8d2;--raise:#ebeae4;--accent:#ff3d00;--on-accent:#111111;--mono:'JetBrains Mono Variable',ui-monospace,monospace;--display:'Unbounded Variable','JetBrains Mono Variable',sans-serif;--ease-out:cubic-bezier(0.16,1,0.3,1);}.ds-btn{display:inline-flex;align-items:center;gap:7px;height:30px;padding:0 12px;border:1px solid var(--ink);border-radius:2px;background:transparent;color:var(--ink);font:500 11px/1 var(--mono);cursor:pointer;white-space:nowrap;transition:background 120ms,color 120ms;}.ds-btn svg{width:14px;height:14px;}.ds-btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}.ds-btn-primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent);}.ds-btn-primary:hover{background:var(--ink);border-color:var(--ink);color:var(--paper);}"
+    },
+    {
+      "name": "Solid Button",
+      "kind": "button",
+      "refersTo": "button-solid",
+      "description": "Ink-filled secondary action (Disconnect, Save look); hovers to Foundry Orange.",
+      "html": "<button class=\"ds-btn ds-btn-solid\">Save look</button>",
+      "css": ":host{--paper:#f4f3ef;--ink:#111111;--muted:#64635e;--rule:#8a8984;--line:#d9d8d2;--raise:#ebeae4;--accent:#ff3d00;--on-accent:#111111;--mono:'JetBrains Mono Variable',ui-monospace,monospace;--display:'Unbounded Variable','JetBrains Mono Variable',sans-serif;--ease-out:cubic-bezier(0.16,1,0.3,1);}.ds-btn{display:inline-flex;align-items:center;gap:7px;height:30px;padding:0 12px;border:1px solid var(--ink);border-radius:2px;background:transparent;color:var(--ink);font:500 11px/1 var(--mono);cursor:pointer;white-space:nowrap;transition:background 120ms,color 120ms;}.ds-btn svg{width:14px;height:14px;}.ds-btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}.ds-btn-solid{background:var(--ink);color:var(--paper);}.ds-btn-solid:hover{background:var(--accent);border-color:var(--accent);color:var(--on-accent);}"
+    },
+    {
+      "name": "Outline and Quiet Buttons",
+      "kind": "button",
+      "refersTo": "button",
+      "description": "Default ink-stroked button and the quiet line-stroked variant for secondary tool actions.",
+      "html": "<div style=\"display:flex;gap:6px\"><button class=\"ds-btn\">Paint all</button><button class=\"ds-btn ds-btn-quiet\">Invert</button><button class=\"ds-btn ds-btn-quiet\" disabled>Clear</button></div>",
+      "css": ":host{--paper:#f4f3ef;--ink:#111111;--muted:#64635e;--rule:#8a8984;--line:#d9d8d2;--raise:#ebeae4;--accent:#ff3d00;--on-accent:#111111;--mono:'JetBrains Mono Variable',ui-monospace,monospace;--display:'Unbounded Variable','JetBrains Mono Variable',sans-serif;--ease-out:cubic-bezier(0.16,1,0.3,1);}.ds-btn{display:inline-flex;align-items:center;gap:7px;height:30px;padding:0 12px;border:1px solid var(--ink);border-radius:2px;background:transparent;color:var(--ink);font:500 11px/1 var(--mono);cursor:pointer;white-space:nowrap;transition:background 120ms,color 120ms;}.ds-btn svg{width:14px;height:14px;}.ds-btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}.ds-btn:hover{background:var(--raise);}.ds-btn-quiet{border-color:var(--line);height:28px;padding:0 9px;font-size:10.5px;}.ds-btn:disabled{opacity:.4;cursor:default;background:transparent;}"
+    },
+    {
+      "name": "Search Field",
+      "kind": "input",
+      "refersTo": "search-field",
+      "description": "Ink-stroked field at the head of the preset index; accent outline on focus.",
+      "html": "<label class=\"ds-search\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><path d=\"m21 21-4.3-4.3\"/></svg><input placeholder=\"Search 177 presets\"></label>",
+      "css": ":host{--paper:#f4f3ef;--ink:#111111;--muted:#64635e;--rule:#8a8984;--line:#d9d8d2;--raise:#ebeae4;--accent:#ff3d00;--on-accent:#111111;--mono:'JetBrains Mono Variable',ui-monospace,monospace;--display:'Unbounded Variable','JetBrains Mono Variable',sans-serif;--ease-out:cubic-bezier(0.16,1,0.3,1);}.ds-search{display:flex;align-items:center;gap:8px;height:32px;padding:0 10px;border:1px solid var(--ink);border-radius:2px;background:var(--paper);width:250px;}.ds-search svg{width:14px;height:14px;color:var(--muted);flex:none;}.ds-search input{flex:1;min-width:0;border:0;background:none;outline:none;font:400 12px var(--mono);color:var(--ink);}.ds-search input::placeholder{color:var(--muted);}.ds-search:focus-within{outline:2px solid var(--accent);outline-offset:2px;}"
+    },
+    {
+      "name": "Filter Chips",
+      "kind": "chip",
+      "refersTo": "chip",
+      "description": "Category filters with counts; pressed chip inverts to ink.",
+      "html": "<div class=\"ds-chips\"><button class=\"ds-chip\" aria-pressed=\"true\">All<span class=\"n\">177</span></button><button class=\"ds-chip\">Gradients<span class=\"n\">32</span></button><button class=\"ds-chip\">Animated<span class=\"n\">28</span></button></div>",
+      "css": ":host{--paper:#f4f3ef;--ink:#111111;--muted:#64635e;--rule:#8a8984;--line:#d9d8d2;--raise:#ebeae4;--accent:#ff3d00;--on-accent:#111111;--mono:'JetBrains Mono Variable',ui-monospace,monospace;--display:'Unbounded Variable','JetBrains Mono Variable',sans-serif;--ease-out:cubic-bezier(0.16,1,0.3,1);}.ds-chips{display:flex;gap:4px;}.ds-chip{height:22px;padding:0 7px;border:1px solid var(--line);border-radius:2px;background:none;color:var(--ink);font:400 10px var(--mono);cursor:pointer;}.ds-chip:hover{border-color:var(--ink);}.ds-chip .n{color:var(--muted);margin-left:4px;}.ds-chip[aria-pressed='true']{background:var(--ink);border-color:var(--ink);color:var(--paper);}.ds-chip[aria-pressed='true'] .n{color:var(--line);}.ds-chip:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}"
+    },
+    {
+      "name": "Preset Index Rows",
+      "kind": "nav",
+      "refersTo": "preset-row",
+      "description": "Dense coded rows with colour strips; the active row inverts to ink with an accent code.",
+      "html": "<div class=\"ds-list\"><button class=\"ds-row\" aria-current=\"true\"><span class=\"strip\" style=\"background:linear-gradient(90deg,#ff3d6e,#ff9a3d,#ffd23d,#7a5cff)\"></span><span class=\"name\">Sunset Strip</span><span class=\"code\">G-01</span><span class=\"star on\"><svg viewBox=\"0 0 24 24\" fill=\"currentColor\"><path d=\"M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z\"/></svg></span></button><button class=\"ds-row\"><span class=\"strip\" style=\"background:linear-gradient(90deg,#ff5ac8,#7a5cff,#3dd2ff)\"></span><span class=\"name\">Vaporwave</span><span class=\"code\">G-02</span><span class=\"star\"></span></button><button class=\"ds-row\"><span class=\"strip\" style=\"background:linear-gradient(90deg,#00264d,#0a7bd1,#3de1ff)\"></span><span class=\"name\">Ocean Depth</span><span class=\"code\">G-03</span><span class=\"star\"></span></button></div>",
+      "css": ":host{--paper:#f4f3ef;--ink:#111111;--muted:#64635e;--rule:#8a8984;--line:#d9d8d2;--raise:#ebeae4;--accent:#ff3d00;--on-accent:#111111;--mono:'JetBrains Mono Variable',ui-monospace,monospace;--display:'Unbounded Variable','JetBrains Mono Variable',sans-serif;--ease-out:cubic-bezier(0.16,1,0.3,1);}.ds-list{width:280px;border-top:1px solid var(--ink);background:var(--paper);}.ds-row{display:grid;grid-template-columns:56px minmax(0,1fr) auto 24px;align-items:center;gap:10px;width:100%;height:34px;padding:0 6px 0 14px;border:0;border-bottom:1px solid var(--line);background:none;color:var(--ink);font:400 12px var(--mono);text-align:left;cursor:pointer;}.ds-row:hover{background:var(--raise);}.ds-row .strip{height:14px;border-radius:2px;box-shadow:inset 0 0 0 1px rgb(0 0 0 / .12);}.ds-row .name{font-weight:500;}.ds-row .code{font-size:10px;color:var(--muted);}.ds-row .star svg{width:13px;height:13px;color:var(--accent);}.ds-row[aria-current='true']{background:var(--ink);color:var(--paper);}.ds-row[aria-current='true'] .code{color:var(--accent);font-weight:600;}.ds-row:focus-visible{outline:2px solid var(--accent);outline-offset:-2px;}"
+    },
+    {
+      "name": "Axis Slider",
+      "kind": "custom",
+      "refersTo": "typography.value",
+      "description": "Signature control: label, tabular value, bar-thumb slider and printed ends; the active axis turns Foundry Orange.",
+      "html": "<div class=\"ds-axes\"><div class=\"ds-axis\" data-active=\"true\"><span class=\"lbl\">Hue shift</span><span class=\"val\">+096°</span><input type=\"range\" min=\"-180\" max=\"180\" value=\"96\"><div class=\"ends\"><span>−180°</span><span>+180°</span></div></div><div class=\"ds-axis\"><span class=\"lbl\">Brightness</span><span class=\"val\">100%</span><input type=\"range\" min=\"0\" max=\"100\" value=\"100\"><div class=\"ends\"><span>0%</span><span>100%</span></div></div></div>",
+      "css": ":host{--paper:#f4f3ef;--ink:#111111;--muted:#64635e;--rule:#8a8984;--line:#d9d8d2;--raise:#ebeae4;--accent:#ff3d00;--on-accent:#111111;--mono:'JetBrains Mono Variable',ui-monospace,monospace;--display:'Unbounded Variable','JetBrains Mono Variable',sans-serif;--ease-out:cubic-bezier(0.16,1,0.3,1);}.ds-axes{display:grid;grid-template-columns:repeat(2,190px);gap:28px;font-family:var(--mono);font-variant-numeric:tabular-nums;color:var(--ink);}.ds-axis{display:grid;gap:4px;}.ds-axis .lbl{font-size:10px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);}.ds-axis .val{font:500 28px/1 var(--mono);letter-spacing:-.03em;}.ds-axis .ends{display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-top:-2px;}.ds-axis input{-webkit-appearance:none;appearance:none;width:100%;height:24px;margin:0;background:none;cursor:pointer;}.ds-axis input::-webkit-slider-runnable-track{height:2px;background:var(--ink);}.ds-axis input::-webkit-slider-thumb{-webkit-appearance:none;width:12px;height:24px;margin-top:-11px;background:var(--ink);border-radius:1px;}.ds-axis input::-moz-range-track{height:2px;background:var(--ink);}.ds-axis input::-moz-range-thumb{width:12px;height:24px;border:0;border-radius:1px;background:var(--ink);}.ds-axis[data-active='true'] .val{color:var(--accent);}.ds-axis[data-active='true'] input::-webkit-slider-runnable-track,.ds-axis[data-active='true'] input::-webkit-slider-thumb{background:var(--accent);}.ds-axis[data-active='true'] input::-moz-range-track,.ds-axis[data-active='true'] input::-moz-range-thumb{background:var(--accent);}.ds-axis input:focus-visible{outline:2px solid var(--accent);outline-offset:4px;}"
+    },
+    {
+      "name": "Display Readout",
+      "kind": "custom",
+      "refersTo": "typography.display",
+      "description": "The single Unbounded readout naming the active axis value; scrub by dragging.",
+      "html": "<div class=\"ds-readout\"><button class=\"v\">000°</button><span class=\"ax\"><span class=\"lbl\">Hue shift</span><span class=\"hint\">drag to scrub · double-click resets</span></span></div>",
+      "css": ":host{--paper:#f4f3ef;--ink:#111111;--muted:#64635e;--rule:#8a8984;--line:#d9d8d2;--raise:#ebeae4;--accent:#ff3d00;--on-accent:#111111;--mono:'JetBrains Mono Variable',ui-monospace,monospace;--display:'Unbounded Variable','JetBrains Mono Variable',sans-serif;--ease-out:cubic-bezier(0.16,1,0.3,1);}.ds-readout{display:flex;align-items:baseline;gap:16px;font-family:var(--mono);color:var(--ink);}.ds-readout .v{font:700 72px/.86 var(--display);letter-spacing:-.04em;border:0;background:none;padding:0;color:var(--ink);cursor:ew-resize;}.ds-readout .v:hover{color:var(--accent);}.ds-readout .v:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}.ds-readout .ax{display:grid;gap:3px;}.ds-readout .lbl{font-size:10px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);}.ds-readout .hint{font-size:10px;color:var(--muted);}"
+    },
+    {
+      "name": "Key Caps",
+      "kind": "custom",
+      "refersTo": "key-cap",
+      "description": "Live-coloured caps with an inset hairline ring; selection is a 2px ink outline, press sinks 2px.",
+      "html": "<div class=\"ds-keys\"><button class=\"ds-key\" style=\"--c:#ff4f6a\"><span>Esc</span></button><button class=\"ds-key\" style=\"--c:#ff8a3d\" aria-selected=\"true\"><span>Q</span></button><button class=\"ds-key dark\" style=\"--c:#5b3df5\"><span>Fn</span></button></div>",
+      "css": ":host{--paper:#f4f3ef;--ink:#111111;--muted:#64635e;--rule:#8a8984;--line:#d9d8d2;--raise:#ebeae4;--accent:#ff3d00;--on-accent:#111111;--mono:'JetBrains Mono Variable',ui-monospace,monospace;--display:'Unbounded Variable','JetBrains Mono Variable',sans-serif;--ease-out:cubic-bezier(0.16,1,0.3,1);}.ds-keys{display:flex;gap:6px;}.ds-key{width:44px;height:44px;padding:4px 5px;display:flex;align-items:flex-end;border:0;border-radius:5px;background:var(--c,var(--raise));box-shadow:inset 0 0 0 1px rgb(17 17 17 / .14);color:rgb(17 17 17 / .78);font:400 10px/1.1 var(--mono);cursor:crosshair;transition:transform 90ms var(--ease-out);}.ds-key.dark{color:rgb(255 255 255 / .86);}.ds-key[aria-selected='true']{outline:2px solid var(--ink);outline-offset:2px;color:var(--ink);}.ds-key:active{transform:translateY(2px) scale(.97);}.ds-key:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Live Specimen",
+    "overview": "**Creative North Star: \"The Live Specimen\"**\n\nkeyglow presents the keyboard the way a foundry presents a variable typeface: the 80HE is the giant glyph, the axis sliders remap it, and a monospace readout prints every number. The ground is warm paper, structure is drawn in one-pixel ink rules, and colour belongs to the keys. The chrome stays achromatic so a preset reads truthfully against it. One foundry orange marks whatever is live: the active axis, the primary action, the current stop.\n\nThe density is that of an instrument, not a marketing page. Everything is set in JetBrains Mono at 10 to 13px with tabular figures, in three columns (preset index, stage, tools) separated by full-height ink rules. Unbounded appears exactly twice: the wordmark and the single display readout that names the active axis value. Surfaces are flat. Selection and focus are outlines, not glows; active states invert to ink.\n\nTwo themes share one structure. **Paper** is the default. **Ink** swaps ground and ink for dim rooms and warms the accent slightly so it holds contrast on near-black. Both themes are switched through `data-theme` on the root and every component reads only the role variables, never a theme-specific value.",
+    "keyCharacteristics": [
+      "Warm paper ground, ink one-pixel rules, achromatic chrome; the keys carry all the colour.",
+      "One accent for \"live\": active axis, primary action, current stop, focus ring, caret.",
+      "Monospace everywhere with tabular figures; Unbounded only for wordmark and display readout.",
+      "Flat; active state is ink inversion, selection is an outline.",
+      "Two themes, Paper and Ink, from the same role variables."
+    ],
+    "rules": [
+      {
+        "name": "The Keys Own the Colour Rule",
+        "body": "Chrome is achromatic. Hue enters the UI only as data: key caps, preset colour strips, swatches, the colour field and hue strip.",
+        "section": "colors"
+      },
+      {
+        "name": "The One Live Thing Rule",
+        "body": "Foundry Orange marks what is live or primary right now. If two things on a screen are orange, both must be live (for example the active axis and the Connect action); it is never decoration.",
+        "section": "colors"
+      },
+      {
+        "name": "The Ink and Line Rule",
+        "body": "Ink rules (1px) divide regions: status bar, index, stage, tools. Line rules (1px) divide items inside a region. No third divider weight.",
+        "section": "colors"
+      },
+      {
+        "name": "The Two Unbounded Rule",
+        "body": "Unbounded is used for the wordmark and the single display readout. Every other string, including headings and large values, is JetBrains Mono.",
+        "section": "typography"
+      },
+      {
+        "name": "The Tabular Rule",
+        "body": "All figures are tabular; numeric formats are padded where they scrub (hue as `±000°`, speed as `0.00×`).",
+        "section": "typography"
+      },
+      {
+        "name": "The Specimen Scale Rule",
+        "body": "The keyboard spans the full stage width at its true 17.25:6.25 aspect; nothing sits beside it.",
+        "section": "layout"
+      },
+      {
+        "name": "The Outline, Not Glow Rule",
+        "body": "Focus is a 2px accent outline offset 2px. Key selection is a 2px ink outline offset 2px. Neither uses blur.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "**Do** read every colour through the role variables (`--paper`, `--ink`, `--muted`, `--rule`, `--line`, `--raise`, `--accent`, `--on-accent`) so Paper and Ink both work without per-theme overrides.",
+      "**Do** draw region boundaries with 1px ink rules and in-region dividers with 1px line rules.",
+      "**Do** show an active or pressed state by inverting to ink with paper text.",
+      "**Do** keep Foundry Orange for what is live or primary: the active axis, the primary action, the current stop, focus.",
+      "**Do** set every number in JetBrains Mono with tabular figures, and print slider ends.",
+      "**Do** keep controls at 2px radius and key caps at 5px."
+    ],
+    "donts": [
+      "**Don't** use Unbounded for anything beyond the wordmark and the single display readout.",
+      "**Don't** add elevation shadows or glows; hairline 1px rings on caps and thumbs are the only box-shadows.",
+      "**Don't** mark the active preset row with a coloured side stripe; it is ink inversion plus an accent code.",
+      "**Don't** put hue into the chrome; colour in the UI is data (keys, strips, swatches, the colour field).",
+      "**Don't** use Rule Grey for readable text; it is for disabled values and resting icons."
+    ]
+  }
+}
