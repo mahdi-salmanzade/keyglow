@@ -7,13 +7,17 @@ HIDAPI = $(REF)/hidapi
 CFLAGS = -O1 -I$(HIDAPI)/hidapi -I$(SDK)
 FRAMEWORKS = -framework IOKit -framework CoreFoundation -framework AppKit
 
-all: bin/handshake bin/colortest
+all: bin/handshake bin/colortest bin/lightbar-probe
 
 bin/handshake: handshake.c $(SDK)/wooting-rgb-sdk.c $(SDK)/wooting-usb.c $(HIDAPI)/mac/hid.c
 	@mkdir -p bin
 	clang $(CFLAGS) -w $^ $(FRAMEWORKS) -o $@
 
 bin/colortest: colortest.c $(HIDAPI)/mac/hid.c
+	@mkdir -p bin
+	clang $(CFLAGS) -w $^ $(FRAMEWORKS) -o $@
+
+bin/lightbar-probe: lightbar-probe.c $(HIDAPI)/mac/hid.c
 	@mkdir -p bin
 	clang $(CFLAGS) -w $^ $(FRAMEWORKS) -o $@
 
