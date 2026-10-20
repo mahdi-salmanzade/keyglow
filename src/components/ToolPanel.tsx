@@ -10,6 +10,7 @@ import { PRESET_BY_ID } from '../presets'
 import { downloadLook, sanitizeLook, shareUrl } from '../state/share'
 import { applyLook, checkpoint, currentLook, redo, setState, undo, useEditor, type Tool } from '../state/store'
 import { ColorField } from './ColorField'
+import { LightbarPanel } from './LightbarPanel'
 import { paintKeys, targetKeys } from '../state/paint'
 import { toast } from '../state/toast'
 
@@ -88,6 +89,8 @@ export function ToolPanel() {
           ))}
         </div>
       </section>
+
+      <LightbarPanel />
 
       <section className="tool-section">
         <span className="label">Direction</span>

@@ -11,6 +11,7 @@ import {
   type Layout,
   type Rgb,
 } from './protocol'
+import { ACTIVE_PROFILE_COMMAND, encodeLightbar, lightbarReport, type LightbarConfig } from './lightbar'
 
 export type DeviceInfo = {
   model: string
@@ -115,6 +116,18 @@ export class WootingDevice {
     } finally {
       this.writing = false
     }
+  }
+
+  /** Slot of the profile the keyboard is using right now (Mode key switches it). */
+  async activeProfile(): Promise<number> {
+    const reply = await this.command(ACTIVE_PROFILE_COMMAND)
+    return reply && reply.byteLength > 6 ? reply.getUint8(6) : 0
+  }
+
+  /** Writes the light bar's Light Indicator setup into the active profile. */
+  async writeLightbar(config: LightbarConfig) {
+    const { reportId, data } = lightbarReport(await this.activeProfile(), encodeLightbar(config))
+    await this.dev.sendReport(reportId, data)
   }
 
   /** Hands the LEDs back to the keyboard's active profile. */

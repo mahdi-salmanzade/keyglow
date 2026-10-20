@@ -4,7 +4,7 @@ import { runtime } from '../engine/runtime'
 import { WOOTING_80HE } from '../layout/wooting-80he'
 import type { Key } from '../layout/types'
 import { KEY_BY_ID, paintKeys, targetKeys } from '../state/paint'
-import { checkpoint, getState, pushRecent, setState, useEditor, type Paint } from '../state/store'
+import { checkpoint, getState, pushRecent, setState, useEditor, type LightbarState, type Paint } from '../state/store'
 
 const LAYOUT = WOOTING_80HE
 
@@ -15,6 +15,39 @@ type Gesture =
   | { kind: 'marquee'; from: Point; to: Point; additive: boolean; base: string[] }
 
 const luminance = ([r, g, b]: Rgb) => (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255
+const MIRROR_KEYS = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0']
+
+/** The 80HE light bar right of Enter, previewing what keyglow has set on it. */
+const LightbarFixture = memo(function LightbarFixture({
+  f,
+  lightbar,
+  register,
+}: {
+  f: NonNullable<typeof LAYOUT.fixtures>[number]
+  lightbar: LightbarState
+  register: (id: string, el: HTMLElement | null) => void
+}) {
+  const style = {
+    left: `${(f.x / LAYOUT.width) * 100}%`,
+    top: `${(f.y / LAYOUT.height) * 100}%`,
+    width: `${(f.w / LAYOUT.width) * 100}%`,
+    height: `${(f.h / LAYOUT.height) * 100}%`,
+  }
+  const { mode } = lightbar
+  const seg = (i: number) =>
+    mode === 'colours' ? css(lightbar.colors[i] ?? [0, 0, 0]) : mode === 'pulse' ? css(lightbar.pulseColor) : mode === 'off' ? '#000' : undefined
+  return (
+    <div
+      className="fixture"
+      data-mode={mode}
+      ref={(el) => register(f.id, el)}
+      title={mode === 'keyboard' ? 'Light bar: following the keyboard’s own effect' : `Light bar: ${mode}`}
+      style={{ ...style, '--pulse': `${lightbar.pulseSeconds}s`, opacity: mode === 'keyboard' ? 1 : 0.35 + lightbar.brightness * 0.65 } as React.CSSProperties}
+    >
+      {mode === 'keyboard' ? <span>{f.label}</span> : Array.from({ length: 10 }, (_, i) => <i key={i} style={{ background: seg(i) }} />)}
+    </div>
+  )
+})
 
 function applyGradient(from: Point, to: Point) {
   const { primary, secondary } = getState()
@@ -68,6 +101,7 @@ const KeyCap = memo(function KeyCap({
 export function Keyboard() {
   const tool = useEditor((s) => s.tool)
   const selection = useEditor((s) => s.selection)
+  const lightbar = useEditor((s) => s.lightbar)
   const boardRef = useRef<HTMLDivElement>(null)
   const elements = useRef(new Map<string, HTMLElement>())
   const gesture = useRef<Gesture | null>(null)
@@ -82,6 +116,12 @@ export function Keyboard() {
   useEffect(
     () =>
       runtime.onFrame((colors) => {
+        // Mirror mode: the keyboard copies the number row onto the bar, so preview exactly that.
+        const bar = elements.current.get('lightbar')
+        if (bar && getState().lightbar.mode === 'mirror') {
+          const row = MIRROR_KEYS.map((id) => colors[KEY_BY_ID.get(id)!.leds[0]])
+          bar.querySelectorAll<HTMLElement>('i').forEach((seg, i) => (seg.style.background = css(row[i])))
+        }
         for (const k of LAYOUT.keys) {
           const el = elements.current.get(k.id)
           if (!el) continue
@@ -232,19 +272,7 @@ export function Keyboard() {
         <KeyCap key={k.id} k={k} selected={selection.includes(k.id)} register={register} />
       ))}
       {LAYOUT.fixtures?.map((f) => (
-        <div
-          key={f.id}
-          className="fixture"
-          title="Light bar: runs its own Wootility effect. Wooting hasn't opened it to apps yet, so keyglow can't colour it."
-          style={{
-            left: `${(f.x / LAYOUT.width) * 100}%`,
-            top: `${(f.y / LAYOUT.height) * 100}%`,
-            width: `${(f.w / LAYOUT.width) * 100}%`,
-            height: `${(f.h / LAYOUT.height) * 100}%`,
-          }}
-        >
-          <span>{f.label}</span>
-        </div>
+        <LightbarFixture key={f.id} f={f} lightbar={lightbar} register={register} />
       ))}
       {overlay?.kind === 'marquee' && (() => {
         const a = pct(overlay.from), b = pct(overlay.to)

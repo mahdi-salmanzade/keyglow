@@ -1,0 +1,101 @@
+// Wooting 80HE light bar, set through the keyboard's Light Indicator profile (command 0x20).
+// Reverse-engineered from Wootility 5.4.2's own writes on a real 80HE; see docs/80he-protocol.md.
+//
+//   output report: D1 DA 20 <profile slot> <len lo> <len hi> <LightbarProfile>
+//   LightbarProfile { 1 isEnabled, 2 repeated Layer, 3 inheritGlobal, 4 brightness 0-255 }
+//   Layer (oneof):  4 sync { 1 range, 2 samples }   5 pulse { 1 rgb565, 3 period ms, 4 ?, 5 range }
+//                   6 solid { 1 rgb565, 2 range }    7 perLed { 1 rgb bytes, 2 range }
+//   range { 1 start, 2 end } over LEDs 0-9
+
+import { rgb565, type Rgb } from './protocol'
+
+export const LIGHTBAR_LEDS = 10
+export const LIGHTBAR_COMMAND = 0x20
+/** Command whose reply carries the active profile slot as the first payload byte. */
+export const ACTIVE_PROFILE_COMMAND = 0x0b
+
+export type LightbarLayer =
+  | { kind: 'solid'; color: Rgb }
+  | { kind: 'perLed'; colors: Rgb[] }
+  | { kind: 'pulse'; color: Rgb; periodMs: number }
+  | { kind: 'sync' }
+
+export type LightbarConfig = {
+  /** false hands the bar back to the keyboard's own RGB effect. */
+  enabled: boolean
+  layers: LightbarLayer[]
+  /** 0-255 */
+  brightness: number
+}
+
+class Writer {
+  private bytes: number[] = []
+  varint(v: number) {
+    let x = v >>> 0
+    while (x >= 0x80) {
+      this.bytes.push((x & 0x7f) | 0x80)
+      x >>>= 7
+    }
+    this.bytes.push(x)
+    return this
+  }
+  uint(field: number, v: number) {
+    return this.varint((field << 3) | 0).varint(v)
+  }
+  message(field: number, body: Writer | number[]) {
+    const b = body instanceof Writer ? body.bytes : body
+    this.varint((field << 3) | 2).varint(b.length)
+    this.bytes.push(...b)
+    return this
+  }
+  done() {
+    return Uint8Array.from(this.bytes)
+  }
+}
+
+const fullRange = () => new Writer().uint(1, 0).uint(2, LIGHTBAR_LEDS - 1)
+const color565 = ([r, g, b]: Rgb) => rgb565(r, g, b)
+
+function encodeLayer(layer: LightbarLayer): Writer {
+  switch (layer.kind) {
+    case 'solid':
+      return new Writer().message(6, new Writer().uint(1, color565(layer.color)).message(2, fullRange()))
+    case 'perLed': {
+      const rgb = layer.colors.slice(0, LIGHTBAR_LEDS).flatMap(([r, g, b]) => [r, g, b])
+      return new Writer().message(7, new Writer().message(1, rgb).message(2, fullRange()))
+    }
+    case 'pulse':
+      return new Writer().message(
+        5,
+        new Writer().uint(1, color565(layer.color)).uint(3, Math.round(layer.periodMs)).uint(4, 1).message(5, fullRange()),
+      )
+    case 'sync': {
+      // Wootility's default: mirror the number row (row 1, columns 1-10) onto the 10 LEDs.
+      const at = (row: number, col: number) => new Writer().uint(1, row).uint(2, col)
+      return new Writer().message(4, new Writer().message(1, fullRange()).message(2, new Writer().message(1, at(1, 1)).message(2, at(1, 10))))
+    }
+  }
+}
+
+export function encodeLightbar(config: LightbarConfig): Uint8Array {
+  const w = new Writer().uint(1, config.enabled ? 1 : 0)
+  for (const layer of config.layers) w.message(2, encodeLayer(layer))
+  return w.uint(3, 1).uint(4, Math.max(0, Math.min(255, Math.round(config.brightness)))).done()
+}
+
+const REPORTS = [
+  { id: 1, size: 32 },
+  { id: 2, size: 62 },
+  { id: 3, size: 254 },
+] as const
+
+/** Wraps a LightbarProfile message into the smallest output report that fits. */
+export function lightbarReport(profileSlot: number, message: Uint8Array): { reportId: number; data: Uint8Array<ArrayBuffer> } {
+  const total = 6 + message.length
+  const report = REPORTS.find((r) => total <= r.size)
+  if (!report) throw new Error('Light bar message too large')
+  const data = new Uint8Array(report.size)
+  data.set([0xd1, 0xda, LIGHTBAR_COMMAND, profileSlot, message.length & 0xff, message.length >> 8])
+  data.set(message, 6)
+  return { reportId: report.id, data }
+}

@@ -103,6 +103,35 @@ the SDK's 17-column buffer still sends them. Harmless, but the visual editor sho
   lighting all 38 cells no key uses (including 3,15 and 3,16 directly beneath the bar) left it unchanged
   while the keys responded. Firmware 2.10.1 keeps the bar on its own Wootility effect while an SDK app runs;
   Wooting has promised SDK control "in the future" (not shipped as of Wootility 5.4.2, Sep 2026).
+- **The light bar is set through the Light Indicator profile, command `0x20`** (decoded from Wootility 5.4.2's own
+  writes; keyglow's encoder reproduces them byte for byte; **verified**: a per-LED rainbow written with
+  `tools/bin/lightbar-set rainbow` showed on the bar). See the next section.
 - The undocumented Light Indicator push (output report 1, command `0x1F`, see `reference/80he-lightbar/`)
   is accepted by the 80HE but never acknowledged, and only renders when a Light Indicator effect is set up
   in Wootility. Untested end to end here (no Wootility desktop or background service on the test Mac).
+
+## Light bar (Light Indicator profile)
+
+Wootility configures the 10-LED bar on its **Light Indicator** page and writes it with one output report:
+
+```
+data: D1 DA 20 <profile slot> <len lo> <len hi> <LightbarProfile protobuf>, zero-padded to the
+      smallest output report that fits (1 = 32, 2 = 62, 3 = 254 bytes)
+
+LightbarProfile { 1 isEnabled: bool, 2 layers: repeated Layer, 3 inheritGlobal: bool, 4 brightness: 0-255 }
+Layer (oneof)   3 profile indicator
+                4 sync    { 1 range, 2 samples { 1 {row, col}, 2 {row, col} } }   (default: row 1, cols 1-10)
+                5 pulse   { 1 rgb565, 3 period ms, 4 1, 5 range }
+                6 solid   { 1 rgb565, 2 range }
+                7 perLed  { 1 bytes: R,G,B per LED, 2 range }
+range           { 1 start, 2 end }  over LEDs 0-9 (start is written even when 0)
+```
+
+- **Profile slot**: feature command `0x0B` returns the active slot as the first payload byte (`data[6]` in
+  WebHID, `[7]` with hidapi). Wootility wrote slot 1 while Rapid Profile was active and slot 0 for Typing Profile.
+- The keyboard does not acknowledge these writes, and no read command returns the light bar setup; Wootility
+  keeps its own copy, so it will not show settings keyglow wrote until you edit them there.
+- Profile data uses the same framing: e.g. `0x0E`/`0x0F` write per-key colours (6 rows x 21, packed RGB565
+  varints), `0x16` the RGB effect stack, `0x1A` the profile name, colour and icon.
+- Feature command `0x4A` returns all 112 live LED colours (6x17 keys + 10 light bar) as RGB565 little-endian.
+- Unverified: whether `isEnabled = false` hands the bar back to the RGB effect, and whether writes survive unplugging.

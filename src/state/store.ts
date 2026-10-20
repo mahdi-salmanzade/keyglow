@@ -7,6 +7,17 @@ import { load, save } from './storage'
 export type Tool = 'paint' | 'fill' | 'gradient' | 'eyedropper' | 'select'
 export type Axis = 'hue' | 'speed' | 'brightness' | 'spread'
 export type Theme = 'paper' | 'ink'
+export type LightbarMode = 'keyboard' | 'colours' | 'pulse' | 'mirror' | 'off'
+
+export type LightbarState = {
+  mode: LightbarMode
+  /** One colour per LED, left to right. */
+  colors: Rgb[]
+  pulseColor: Rgb
+  pulseSeconds: number
+  /** 0-1 */
+  brightness: number
+}
 export type Filter = PresetCategory | 'All' | 'Starred' | 'Mine'
 
 /** Paint layer: LED index -> colour, drawn over the preset. */
@@ -36,6 +47,7 @@ export type EditorState = Look & {
   myLooks: SavedLook[]
   theme: Theme
   restoreOnClose: boolean
+  lightbar: LightbarState
   filter: Filter
   search: string
 }
@@ -64,6 +76,13 @@ const initial: EditorState = {
   myLooks: [],
   theme: 'paper',
   restoreOnClose: false,
+  lightbar: {
+    mode: 'keyboard',
+    colors: ['#FF0000', '#FF6000', '#FFC800', '#A0FF00', '#00FF3C', '#00FFC8', '#008CFF', '#2800FF', '#AA00FF', '#FF00A0'].map(hex),
+    pulseColor: hex('#FF8A3D'),
+    pulseSeconds: 3,
+    brightness: 1,
+  },
   filter: 'All',
   search: '',
 }
@@ -72,7 +91,7 @@ type Persisted = Omit<EditorState, 'selection' | 'search' | 'activeAxis'>
 
 function hydrate(): EditorState {
   const saved = load<Partial<Persisted>>(PERSIST_KEY, {})
-  const state = { ...initial, ...saved }
+  const state = { ...initial, ...saved, lightbar: { ...initial.lightbar, ...saved.lightbar } }
   if (!PRESET_BY_ID.has(state.presetId)) state.presetId = DEFAULT_PRESET_ID
   return state
 }

@@ -269,6 +269,23 @@ button, input { font: inherit; color: inherit; }
   pointer-events: auto; cursor: help;
 }
 .fixture span { white-space: nowrap; overflow: hidden; }
+.fixture:not([data-mode='keyboard']) {
+  display: flex; gap: 1px; padding: 2px; overflow: hidden;
+  border: 1px solid var(--ink); background: #111;
+}
+.fixture i { flex: 1; height: 100%; border-radius: 1px; background: #333; }
+.fixture[data-mode='pulse'] i { animation: bar-pulse var(--pulse, 3s) ease-in-out infinite; }
+@keyframes bar-pulse { 0%, 100% { opacity: 0.12; } 50% { opacity: 1; } }
+
+.lightbar-strip {
+  display: grid; grid-template-columns: repeat(10, 1fr); gap: 2px;
+  padding: 3px; border: 1px solid var(--ink); border-radius: 999px; background: #111;
+}
+.lightbar-strip button { height: 18px; border: 0; padding: 0; cursor: crosshair; }
+.lightbar-strip button:first-child { border-radius: 999px 2px 2px 999px; }
+.lightbar-strip button:last-child { border-radius: 2px 999px 999px 2px; }
+.lightbar-strip button:hover { outline: 2px solid var(--paper); outline-offset: -2px; }
+.pulse-swatch { width: 24px; height: 24px; border: 1px solid var(--ink); border-radius: 2px; }
 .marquee {
   position: absolute; pointer-events: none;
   border: 1px solid var(--ink); background: color-mix(in srgb, var(--accent) 8%, transparent);

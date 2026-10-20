@@ -2,6 +2,7 @@ import { useSyncExternalStore } from 'react'
 import { runtime } from '../engine/runtime'
 import { webHidSupported, WootingDevice, type DeviceInfo } from '../hid/device'
 import { CONFIG_USAGE_PAGE, WOOTING_VID } from '../hid/protocol'
+import { syncLightbar } from './lightbar'
 import { getState } from './store'
 
 export type DeviceStatus =
@@ -30,9 +31,13 @@ export function useDevice() {
   )
 }
 
+let stopLightbar: (() => void) | null = null
+
 function adopt(d: WootingDevice | null) {
   device = d
   runtime.attach(d)
+  stopLightbar?.()
+  stopLightbar = d ? syncLightbar((config) => d.writeLightbar(config)) : null
   set(d ? { kind: 'connected', info: d.info } : { kind: 'idle' })
 }
 
@@ -91,6 +96,8 @@ if (webHidSupported()) {
     if (device?.isSame(e.device)) {
       device = null
       runtime.attach(null)
+      stopLightbar?.()
+      stopLightbar = null
       set({ kind: 'idle', notice: 'Keyboard disconnected. Plug it back in to keep going.' })
     }
   })
