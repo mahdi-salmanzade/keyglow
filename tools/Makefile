@@ -7,7 +7,7 @@ HIDAPI = $(REF)/hidapi
 CFLAGS = -O1 -I$(HIDAPI)/hidapi -I$(SDK)
 FRAMEWORKS = -framework IOKit -framework CoreFoundation -framework AppKit
 
-all: bin/handshake bin/colortest bin/lightbar-probe bin/lightbar-level bin/lightbar-set
+all: bin/handshake bin/colortest bin/lightbar-probe bin/lightbar-level bin/lightbar-set bin/profile-colors
 
 bin/handshake: handshake.c $(SDK)/wooting-rgb-sdk.c $(SDK)/wooting-usb.c $(HIDAPI)/mac/hid.c
 	@mkdir -p bin
@@ -26,6 +26,10 @@ bin/lightbar-level: lightbar-level.c $(HIDAPI)/mac/hid.c
 	clang $(CFLAGS) -w $^ $(FRAMEWORKS) -o $@
 
 bin/lightbar-set: lightbar-set.c $(HIDAPI)/mac/hid.c
+	@mkdir -p bin
+	clang $(CFLAGS) -w $^ $(FRAMEWORKS) -o $@
+
+bin/profile-colors: profile-colors.c $(HIDAPI)/mac/hid.c
 	@mkdir -p bin
 	clang $(CFLAGS) -w $^ $(FRAMEWORKS) -o $@
 

@@ -15,9 +15,14 @@ it talks to the keyboard straight from the browser over WebHID.
 2. Quit Wootility, Wootility web and the Wootility background service: they drive the same LEDs and will overwrite keyglow.
 3. Click **Connect keyboard** and choose your Wooting in the browser's chooser.
 
-Colours are live overrides, not saved to the keyboard's profiles. They stay until you click **Restore profile lighting**,
-switch profiles on the keyboard, or unplug it. Animated presets keep running while the keyglow tab is open, even in the
+While keyglow is open, colours are live overrides. They stay until you click **Restore profile lighting**, switch
+profiles on the keyboard, or unplug it. Animated presets keep running while the keyglow tab is open, even in the
 background; reactive presets respond to typing while the tab is focused.
+
+**Save to keyboard** stores the current look, and the light bar setting, in the keyboard's active profile, the same way
+Wootility's Save to Keyboard does. The keyboard then shows it on its own: after unplugging, on any computer, with no app
+running. Animated looks are stored as a still frame. The first save on a profile keeps a copy of the lighting it had, and
+**Put back original** restores it.
 
 | Shortcut | Action |
 | --- | --- |
@@ -47,7 +52,7 @@ npm run lint
 | `src/engine/` | Colour maths, the render loop, the background ticker |
 | `src/components/` | The editor UI |
 | `docs/` | Protocol notes captured from a real 80HE, and the upstream sources they come from |
-| `tools/` | Native C checks (handshake and colour write) that run against the keyboard without a browser |
+| `tools/` | Native C tools that talk to the keyboard without a browser: handshake, colour and light bar checks, profile backup and restore |
 
 ### Add a preset
 

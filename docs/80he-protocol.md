@@ -115,7 +115,7 @@ the SDK's 17-column buffer still sends them. Harmless, but the visual editor sho
 Wootility configures the 10-LED bar on its **Light Indicator** page and writes it with one output report:
 
 ```
-data: D1 DA 20 <profile slot> <len lo> <len hi> <LightbarProfile protobuf>, zero-padded to the
+data: D1 DA 20 <header> <len lo> <len hi> <LightbarProfile protobuf>, zero-padded to the
       smallest output report that fits (1 = 32, 2 = 62, 3 = 254 bytes)
 
 LightbarProfile { 1 isEnabled: bool, 2 layers: repeated Layer, 3 inheritGlobal: bool, 4 brightness: 0-255 }
@@ -127,11 +127,40 @@ Layer (oneof)   3 profile indicator
 range           { 1 start, 2 end }  over LEDs 0-9 (start is written even when 0)
 ```
 
-- **Profile slot**: feature command `0x0B` returns the active slot as the first payload byte (`data[6]` in
-  WebHID, `[7]` with hidapi). Wootility wrote slot 1 while Rapid Profile was active and slot 0 for Typing Profile.
-- The keyboard does not acknowledge these writes, and no read command returns the light bar setup; Wootility
-  keeps its own copy, so it will not show settings keyglow wrote until you edit them there.
-- Profile data uses the same framing: e.g. `0x0E`/`0x0F` write per-key colours (6 rows x 21, packed RGB565
-  varints), `0x16` the RGB effect stack, `0x1A` the profile name, colour and icon.
+- **Header byte** (shared by every profile write, from Wootility's `Nb()`): bit 0 = save, bits 1-5 = profile index,
+  bits 6-7 = namespace. Without the save bit the bar changes at once but only until a replug or profile switch.
+  **Verified**: header `01` stored a rainbow in profile 0 (read back byte for byte with `0x42`), header `00` did not.
+- Feature command `0x42` (getLEDBarProfile, profile in the first parameter byte) returns the stored setup; empty means
+  none is stored and the bar follows the keys. `0x43` returns the global one (the profile-switch indicator).
+  An empty write with the save bit does **not** clear a stored setup; store `08 00 18 01` (isEnabled false,
+  inheritGlobal) to hand the bar back to the keys.
+- `isEnabled = false` hands the bar back to the RGB effect (**verified** with the `0x4A` live read).
+- The keyboard does not acknowledge these writes.
 - Feature command `0x4A` returns all 112 live LED colours (6x17 keys + 10 light bar) as RGB565 little-endian.
-- Unverified: whether `isEnabled = false` hands the bar back to the RGB effect, and whether writes survive unplugging.
+
+## Stored lighting (Save to Keyboard)
+
+Decoded from Wootility 5.4.2 (its device class, de-obfuscated) and **verified** on a real 80HE with
+`tools/bin/profile-colors`: write, store, read back, then restore the original byte for byte, other profiles untouched.
+
+```
+working copy (output report, header 00):  D1 DA 0E <hdr> <len16> <rows 0-2>       what the keys show now
+                                          D1 DA 0F <hdr> <len16> <rows 3-5>
+                                          D1 DA 16 <hdr> <len16> <RgbProfileCore>
+store it (feature 8, saveRgbProfile):     D1 DA 08 <profile index> <namespace> 00 00   (acknowledged)
+read the stored copy (feature):           23 rows 0-2 · 24 rows 3-5 · 32 RgbProfileCore · 37 name/colour/icon
+                                          39 Fn-layer key colours · 42 light bar · 0B active profile [index, namespace]
+
+rows            repeated Row { 1 packed uint32 rgb565 } , 21 per row (matrix columns), 3 rows per message
+RgbProfileCore  { 1 base { 1 brightness, 2 caps lock colour, 3 fn lock colour, 4 scroll lock, 5 num lock },
+                  4 effectsV2 { repeated layer } }
+```
+
+- A core with **no effect layers is Wootility's "Static"**: the keys show their stored colours. Profiles 2 and 3 of a
+  fresh 80HE hold exactly `0a 0b 08 ff 01 10 ff ff 03 18 ff ff 03`.
+- Writes without the save bit change only the working copy; `0x23`/`0x24`/`0x32` keep returning the stored copy until
+  feature 8 copies the working copy into the profile. Wootility always sends header `00` for these three.
+- Feature-command parameters are a little-endian uint32 `index | namespace << 8 | param1 << 16 | param2 << 24` in the
+  four bytes after the command.
+- Other commands from the same class: 1 version, 3 serial, 23 activateProfile, 25 soft reset, 38 reloadProfile,
+  43 resetSettings (factory reset: never send casually), 62 profile count, 72 profile save tracker, 73 heartbeat.

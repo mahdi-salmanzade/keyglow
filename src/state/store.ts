@@ -20,6 +20,9 @@ export type LightbarState = {
 }
 export type Filter = PresetCategory | 'All' | 'Starred' | 'Mine'
 
+/** A profile's lighting from before keyglow first saved over it, as hex-encoded protobuf. */
+export type KeyboardBackup = { profileName?: string; top: string; bottom: string; core: string; lightbar: string; savedAt: number }
+
 /** Paint layer: LED index -> colour, drawn over the preset. */
 export type Paint = Record<number, Rgb>
 
@@ -48,6 +51,8 @@ export type EditorState = Look & {
   theme: Theme
   restoreOnClose: boolean
   lightbar: LightbarState
+  /** Keyed by "namespace:index" of the keyboard profile. */
+  keyboardBackups: Record<string, KeyboardBackup>
   filter: Filter
   search: string
 }
@@ -83,6 +88,7 @@ const initial: EditorState = {
     pulseSeconds: 3,
     brightness: 1,
   },
+  keyboardBackups: {},
   filter: 'All',
   search: '',
 }

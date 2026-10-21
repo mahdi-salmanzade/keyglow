@@ -170,24 +170,28 @@ class Runtime {
 
   private lift: { brightness: number; table: Uint8Array | null } = { brightness: 1, table: null }
 
-  private send(now: number) {
-    if (!this.device || this.released) return
+  /** The current frame as the keyboard gets it: brightness lift applied, quantised, at row * 21 + col. */
+  deviceMatrix(): (Rgb | undefined)[] {
     const { brightness } = getState()
     if (brightness !== this.lift.brightness) this.lift = { brightness, table: liftTable(brightness) }
     const table = this.lift.table
+    const matrix: (Rgb | undefined)[] = new Array(MATRIX_ROWS * MATRIX_COLS)
+    for (let i = 0; i < LED_COUNT; i++) {
+      const led = LAYOUT.leds[i]
+      const c = this.frame[i]
+      matrix[matrixIndex(led.row, led.col)] = quantize(table ? [table[c[0]], table[c[1]], table[c[2]]] : c)
+    }
+    return matrix
+  }
+
+  private send(now: number) {
+    if (!this.device || this.released) return
     if (now - this.lastSent < SEND_INTERVAL_MS) {
       this.dirty = true // try again next tick so a static look's last change still lands
       return
     }
-    const matrix: (Rgb | undefined)[] = new Array(MATRIX_ROWS * MATRIX_COLS)
-    let signature = ''
-    for (let i = 0; i < LED_COUNT; i++) {
-      const led = LAYOUT.leds[i]
-      const c = this.frame[i]
-      const q = quantize(table ? [table[c[0]], table[c[1]], table[c[2]]] : c)
-      matrix[matrixIndex(led.row, led.col)] = q
-      signature += q.join(',') + ';'
-    }
+    const matrix = this.deviceMatrix()
+    const signature = matrix.map((q) => q?.join(',') ?? '').join(';')
     if (signature === this.lastSignature) return
     this.lastSignature = signature
     this.lastSent = now

@@ -1,6 +1,7 @@
 // Sets the Wooting 80HE light bar through the Light Indicator profile write (command 0x20),
 // the same message Wootility sends when you edit Light Indicator effects:
-//   output report: D1 DA 20 <profile> <len lo> <len hi> <LightbarProfile protobuf>
+//   output report: D1 DA 20 <header> <len lo> <len hi> <LightbarProfile protobuf>
+//   header: bit 0 save, bits 1-5 profile index, bits 6-7 namespace (live only here: no save bit)
 //   LightbarProfile { 1 isEnabled, 2 repeated Layer, 3 inheritGlobal, 4 brightness }
 //   Layer.solid (6) { 1 rgb565, 2 range } / Layer.perLed (7) { 1 rgb bytes, 2 range }
 //
@@ -74,19 +75,20 @@ int main(int argc, char **argv) {
   if (!d) { printf("No Wooting 0xFF55 interface found.\n"); return 1; }
 
   uint8_t reply[64];
-  int n = command(d, 0x0B, reply, sizeof reply); // active profile slot is the first payload byte
+  int n = command(d, 0x0B, reply, sizeof reply); // reply payload: [profile index, namespace]
   if (n < 8) { printf("Could not read the active profile.\n"); return 1; }
   uint8_t profile = reply[7];
+  uint8_t header = (profile & 31) << 1 | (n > 8 ? (reply[8] & 3) << 6 : 0);
 
   // Smallest output report that fits: 1 = 32, 2 = 62, 3 = 254 bytes of data.
   int total = 6 + msg.n;
   int report = total <= 32 ? 1 : total <= 62 ? 2 : 3;
   int size = report == 1 ? 32 : report == 2 ? 62 : 254;
-  uint8_t out[255] = {report, 0xD1, 0xDA, 0x20, profile, msg.n & 0xFF, msg.n >> 8};
+  uint8_t out[255] = {report, 0xD1, 0xDA, 0x20, header, msg.n & 0xFF, msg.n >> 8};
   memcpy(out + 7, msg.b, msg.n);
   int written = hid_write(d, out, size + 1);
 
-  printf("profile slot %d · %s · brightness %d · report %d · wrote %d of %d bytes\n",
+  printf("profile %d · %s · brightness %d · report %d · wrote %d of %d bytes\n",
          profile, solid ? argv[2] : "rainbow", brightness, report, written, size + 1);
   hid_close(d);
   hid_exit();

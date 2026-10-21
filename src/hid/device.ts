@@ -11,7 +11,8 @@ import {
   type Layout,
   type Rgb,
 } from './protocol'
-import { ACTIVE_PROFILE_COMMAND, encodeLightbar, lightbarReport, LIVE_LEDS_COMMAND, type LightbarConfig } from './lightbar'
+import { encodeLightbar, LIGHTBAR_COMMAND, LIVE_LEDS_COMMAND, type LightbarConfig } from './lightbar'
+import { ProfileCommand, profileHeader, profileName, profileReport, type ProfileId, type StoredLighting } from './profile'
 
 export type DeviceInfo = {
   model: string
@@ -20,6 +21,15 @@ export type DeviceInfo = {
 }
 
 const REPLY_TIMEOUT_MS = 800
+
+/** A reply's payload: data is D1 DA cmd 88 <len16> payload. */
+function payload(reply: DataView | null): Uint8Array | null {
+  if (!reply || reply.byteLength < 6) return null
+  const len = Math.min(reply.getUint8(4) | (reply.getUint8(5) << 8), reply.byteLength - 6)
+  return new Uint8Array(reply.buffer, reply.byteOffset + 6, len).slice()
+}
+
+const sameBytes = (a: Uint8Array, b: Uint8Array) => a.length === b.length && a.every((v, i) => v === b[i])
 
 export const webHidSupported = () => typeof navigator !== 'undefined' && 'hid' in navigator
 
@@ -111,6 +121,11 @@ export class WootingDevice {
     return reply
   }
 
+  /** Commands that name a profile carry its index and namespace in the first two parameter bytes. */
+  private profileCommand(cmd: number, id: ProfileId) {
+    return this.command(cmd, 0, 0, id.namespace, id.index)
+  }
+
   sendFrame(colors: ArrayLike<Rgb | undefined>) {
     this.pendingFrame = framePayload(colors)
     if (!this.writing) void this.flush()
@@ -131,27 +146,66 @@ export class WootingDevice {
 
   /** What every LED is showing right now: 6x17 keys then the 10 light bar LEDs (RGB565 expanded). */
   async readLeds(): Promise<Rgb[] | null> {
-    const reply = await this.command(LIVE_LEDS_COMMAND)
-    if (!reply || reply.byteLength < 6) return null
-    const len = reply.getUint8(4) | (reply.getUint8(5) << 8)
+    const body = payload(await this.command(LIVE_LEDS_COMMAND))
+    if (!body) return null
     const out: Rgb[] = []
-    for (let i = 6; i + 1 < 6 + len && i + 1 < reply.byteLength; i += 2) {
-      const v = reply.getUint8(i) | (reply.getUint8(i + 1) << 8)
+    for (let i = 0; i + 1 < body.length; i += 2) {
+      const v = body[i] | (body[i + 1] << 8)
       const r = v >> 11, g = (v >> 5) & 63, b = v & 31
       out.push([(r << 3) | (r >> 2), (g << 2) | (g >> 4), (b << 3) | (b >> 2)])
     }
     return out
   }
 
-  /** Slot of the profile the keyboard is using right now (Mode key switches it). */
-  async activeProfile(): Promise<number> {
-    const reply = await this.command(ACTIVE_PROFILE_COMMAND)
-    return reply && reply.byteLength > 6 ? reply.getUint8(6) : 0
+  /** The profile the keyboard is using right now (the Mode key switches it). */
+  async activeProfile(): Promise<ProfileId> {
+    const body = payload(await this.command(ProfileCommand.ActiveProfile))
+    return { index: body?.[0] ?? 0, namespace: body?.[1] ?? 0 }
   }
 
-  /** Writes the light bar's Light Indicator setup into the active profile. */
-  async writeLightbar(config: LightbarConfig) {
-    const { reportId, data } = lightbarReport(await this.activeProfile(), encodeLightbar(config))
+  /** Sets the light bar's Light Indicator setup. With `save` the active profile keeps it after unplugging. */
+  async writeLightbar(config: LightbarConfig, save = false) {
+    const header = profileHeader(save, await this.activeProfile())
+    const { reportId, data } = profileReport(LIGHTBAR_COMMAND, header, encodeLightbar(config))
+    await this.dev.sendReport(reportId, data)
+  }
+
+  async profileName(id: ProfileId): Promise<string | undefined> {
+    const meta = payload(await this.profileCommand(ProfileCommand.ReadMeta, id))
+    return meta ? profileName(meta) : undefined
+  }
+
+  /** The lighting a profile has stored, as the keyboard returns it. */
+  async readStoredLighting(id: ProfileId): Promise<StoredLighting | null> {
+    const top = payload(await this.profileCommand(ProfileCommand.ReadColorsTop, id))
+    const bottom = payload(await this.profileCommand(ProfileCommand.ReadColorsBottom, id))
+    const core = payload(await this.profileCommand(ProfileCommand.ReadCore, id))
+    const lightbar = payload(await this.profileCommand(ProfileCommand.ReadLightbar, id))
+    return top && bottom && core && lightbar ? { top, bottom, core, lightbar } : null
+  }
+
+  /**
+   * Stores key colours and effects in a profile, the way Wootility's Save to Keyboard does: write them to
+   * what the keys show, then have the keyboard keep that. Resolves true once the stored copy reads back the same.
+   */
+  async storeLighting(id: ProfileId, lighting: Omit<StoredLighting, 'lightbar'>): Promise<boolean> {
+    const writes: [number, Uint8Array][] = [
+      [ProfileCommand.Core, lighting.core],
+      [ProfileCommand.ColorsTop, lighting.top],
+      [ProfileCommand.ColorsBottom, lighting.bottom],
+    ]
+    for (const [cmd, body] of writes) {
+      const { reportId, data } = profileReport(cmd, profileHeader(false), body)
+      await this.dev.sendReport(reportId, data)
+    }
+    if (!(await this.profileCommand(ProfileCommand.Save, id))) return false
+    const stored = await this.readStoredLighting(id)
+    return !!stored && sameBytes(stored.top, lighting.top) && sameBytes(stored.bottom, lighting.bottom) && sameBytes(stored.core, lighting.core)
+  }
+
+  /** Stores a light bar setup (raw LightbarProfile) in a profile. */
+  async storeLightbar(id: ProfileId, message: Uint8Array) {
+    const { reportId, data } = profileReport(LIGHTBAR_COMMAND, profileHeader(true, id), message)
     await this.dev.sendReport(reportId, data)
   }
 

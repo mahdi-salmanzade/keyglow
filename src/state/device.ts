@@ -22,6 +22,9 @@ function set(next: DeviceStatus) {
   for (const l of listeners) l()
 }
 
+/** The open keyboard, if any. */
+export const currentDevice = () => device
+
 export function useDevice() {
   return useSyncExternalStore(
     (l) => {

@@ -96,7 +96,7 @@ button, input { font: inherit; color: inherit; }
 .btn.primary { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
 .btn.primary:hover { background: var(--ink); border-color: var(--ink); color: var(--paper); }
 .btn.quiet { border-color: var(--line); }
-.btn:disabled { opacity: 0.4; cursor: default; background: transparent; }
+.btn:disabled { opacity: 0.4; cursor: default; background: transparent; color: var(--ink); }
 .btn svg { width: 14px; height: 14px; flex: none; }
 
 .icon-btn {
@@ -416,6 +416,8 @@ input[type='range']:focus-visible { outline: 2px solid var(--accent); outline-of
 .save-form { display: flex; gap: 6px; }
 .save-form input { flex: 1; min-width: 0; height: 28px; padding: 0 8px; border: 1px solid var(--ink); border-radius: 2px; background: none; font-size: 11px; }
 .selection-count { font-weight: 500; }
+.confirm { display: grid; gap: 8px; justify-items: start; }
+.confirm .tool-hint { margin: 0; min-height: 0; }
 
 /* ---------- Footer, toasts ---------- */
 

@@ -129,7 +129,7 @@ export function LightbarPanel() {
       )}
 
       <p className="tool-hint" style={{ margin: 0 }}>
-        {mode.hint} Written to the keyboard’s active profile (its Light Indicator), so it keeps running after you close keyglow.
+        {mode.hint} Shown live, and it keeps running after you close keyglow. To keep it after unplugging, use Save to keyboard.
       </p>
     </section>
   )
